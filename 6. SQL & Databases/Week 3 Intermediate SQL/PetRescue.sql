@@ -1,0 +1,82 @@
+DROP DATABASE IF EXISTS ibm8_db;
+CREATE DATABASE ibm8_db;
+
+USE ibm8_db;
+
+drop table if exists PETRESCUE;
+
+create table PETRESCUE (
+	ID INTEGER NOT NULL,
+	ANIMAL VARCHAR(20),
+	QUANTITY INTEGER,
+	COST DECIMAL(6,2),
+	RESCUEDATE DATE,
+	PRIMARY KEY (ID)
+	);
+
+insert into PETRESCUE values 
+	(1,'Cat',9,450.09,'2018-05-29'),
+	(2,'Dog',3,666.66,'2018-06-01'),
+	(3,'Dog',1,100.00,'2018-06-04'),
+	(4,'Parrot',2,50.00,'2018-06-04'),
+	(5,'Dog',1,75.75,'2018-06-10'),
+	(6,'Hamster',6,60.60,'2018-06-11'),
+	(7,'Cat',1,44.44,'2018-06-11'),
+	(8,'Goldfish',24,48.48,'2018-06-14'),
+	(9,'Dog',2,222.22,'2018-06-15');
+
+SELECT * FROM PETRESCUE;
+
+-- Aggregate Functions --
+
+-- SELECT SUM(COST) FROM PETRESCUE;
+-- SELECT SUM(COST) AS SUM_OF_COST FROM PETRESCUE;
+-- SELECT MAX(QUANTITY) FROM PETRESCUE;
+-- SELECT MIN(QUANTITY) FROM PETRESCUE;
+-- SELECT AVG(COST) FROM PETRESCUE;
+
+-- Scalar Functions --
+
+-- SELECT ROUND(COST) FROM PETRESCUE;
+-- SELECT ROUND(COST, 0) FROM PETRESCUE;
+-- SELECT ROUND(COST, 2) FROM PETRESCUE;
+-- SELECT LENGTH(ANIMAL) FROM PETRESCUE;
+-- SELECT UCASE(ANIMAL) FROM PETRESCUE;
+-- SELECT LCASE(ANIMAL) FROM PETRESCUE;
+
+-- Date Functions
+
+-- SELECT DAY(RESCUEDATE) FROM PETRESCUE;
+-- SELECT MONTH(RESCUEDATE) FROM PETRESCUE;
+-- SELECT YEAR(RESCUEDATE) FROM PETRESCUE;
+-- SELECT DATE_ADD(RESCUEDATE, INTERVAL 3 DAY) FROM PETRESCUE;
+-- SELECT DATE_ADD(RESCUEDATE, INTERVAL 2 MONTH) FROM PETRESCUE;
+-- SELECT DATE_SUB(RESCUEDATE, INTERVAL 3 DAY) FROM PETRESCUE;
+-- SELECT DATEDIFF(CURRENT_DATE, RESCUEDATE) FROM PETRESCUE;
+-- SELECT DATEDIFF(CURRENT_DATE(), RESCUEDATE) as Day_Difference FROM PETRESCUE;
+-- SELECT FROM_DAYS(DATEDIFF(CURRENT_DATE(), RESCUEDATE)) FROM PETRESCUE;
+-- SELECT DATE_ADD(RESCUEDATE, INTERVAL DATEDIFF(CURRENT_DATE, RESCUEDATE) DAY) AS TODAYS_DATE FROM PETRESCUE;
+
+-- Practice Problems
+
+-- 1. Write a query that displays the average cost of rescuing a single dog. Note that the cost per dog would not be the same in different instances.
+
+-- SELECT AVG(COST/QUANTITY) AS AVG_DOG_COST FROM PETRESCUE WHERE ANIMAL = 'Dog';
+
+-- 2. Write a query that displays the animal name in each rescue in uppercase without duplications.
+
+-- SELECT DISTINCT UCASE(ANIMAL) FROM PETRESCUE;
+
+-- 3. Write a query that displays all the columns from the PETRESCUE table where the animal(s) rescued are cats. Use cat in lowercase in the query.
+
+-- SELECT * FROM PETRESCUE WHERE LCASE(ANIMAL) = 'cat';
+
+-- 4. Write a query that displays the number of rescues in the 5th month.
+
+-- SELECT SUM(QUANTITY) FROM PETRESCUE WHERE MONTH(RESCUEDATE) = 6;
+
+-- 5.  The rescue shelter is supposed to find good homes for all animals within 1 year of their rescue. Write a query that displays the ID and the target date.
+
+-- SELECT ID, DATE_ADD(RESCUEDATE, INTERVAL 1 YEAR) AS TARGET_DATE FROM PETRESCUE;
+
+-- SOURCE PETRESCUE.SQL;
