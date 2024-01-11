@@ -1,4 +1,4 @@
-# Data-Science-Journey
+# IBM-Data-Analyst-Certificate
 
 ## Description
 

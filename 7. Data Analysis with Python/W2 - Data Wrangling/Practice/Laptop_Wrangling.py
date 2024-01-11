@@ -59,10 +59,10 @@ df.drop("Screen", axis=1, inplace=True)
 df = pd.concat([df, dummy_variable_1], axis=1)
 
 
-print(df.head())
+# print(df.head())
 # print(df.info())
 # print(df.describe())
 # print(df["Manufacturer"].unique())
 # print(dummy_variable_1)
 
-# df.to_csv('laptop_wrangling.csv')
+df.to_csv('laptop_wrangling2.csv')
