@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 # import piplite
 # from pyodide.http import pyfetch
 
@@ -52,26 +53,26 @@ import pandas as pd
 
 # filename = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0101EN-SkillsNetwork/labs/Module%204/data/TopSellingAlbums.csv"
 
-filename = './Week 4 Working with Data/TopSellingAlbums.csv'
-filename2 = './Week 4 Working with Data/TopSellingAlbums.xlsx'
-df = pd.read_csv(filename)
-df2 = pd.read_excel(filename2)
-x = df[['Length']]
-x1 = df[['Artist']]
-y = df[['Artist', 'Length', 'Genre']]
-new_index=['a','b','c','d','e','f','g','h']
-df3 = df
-df3.index = new_index
+# filename = './Week 4 Working with Data/TopSellingAlbums.csv'
+# filename2 = './Week 4 Working with Data/TopSellingAlbums.xlsx'
+# df = pd.read_csv(filename)
+# df2 = pd.read_excel(filename2)
+# x = df[['Length']]
+# x1 = df[['Artist']]
+# y = df[['Artist', 'Length', 'Genre']]
+# new_index=['a','b','c','d','e','f','g','h']
+# df3 = df
+# df3.index = new_index
 
-async def download(url, filename):
-    response = await pyfetch(url)
-    if response.status == 200:
-        with open(filename, "wb") as f:
-            f.write(await response.bytes())
-    await download(filename, "TopSellingAlbums.csv")
+# async def download(url, filename):
+#     response = await pyfetch(url)
+#     if response.status == 200:
+#         with open(filename, "wb") as f:
+#             f.write(await response.bytes())
+#     await download(filename, "TopSellingAlbums.csv")
 
 
-print(df)
+# print(df)
 # print(df.head())
 # print(x)
 # print(x1)
@@ -80,11 +81,12 @@ print(df)
 # print('Locations: \n', df.iloc[0,0])
 # print(df.iloc[1,0])
 # print(df.iloc[0,2])
-print(df.iloc[1,2])
-print(df.loc[2,2])
+# print(df.iloc[1,2])
+# print(df.loc[2,2])
 # print(df.loc[0, 'Artist'])
 # print(df.loc[1, 'Artist'])
 # print(df.loc[0, 'Released'])
 # print(df.loc[1, 'Released'])
 # print(df.iloc[0:2, 0:3])
 # print(df.loc[0:2, 'Artist':'Released'])
+print(os.getcwd())
