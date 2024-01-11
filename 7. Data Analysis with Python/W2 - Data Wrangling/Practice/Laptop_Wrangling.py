@@ -38,7 +38,7 @@ df[['Weight_kg', 'Screen_Size_cm']] = df[['Weight_kg', 'Screen_Size_cm']].astype
     
 df['Screen_Size_cm'] = df['Screen_Size_cm']/2.54
 df.rename(columns={'Screen_Size_cm':'Screen_Size_in'}, inplace=True)
-df[['Screen_Size_in']] = np.round(df[['Screen_Size_in']],2)
+df[['Screen_Size_in']] = np.round(df[['Screen_Size_in']],3)
 
 df['Weight_kg'] = df['Weight_kg']*2.205
 df.rename(columns={'Weight_kg':'Weight_lbs'}, inplace=True)
