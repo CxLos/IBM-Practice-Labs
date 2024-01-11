@@ -38,9 +38,11 @@ df[['Weight_kg', 'Screen_Size_cm']] = df[['Weight_kg', 'Screen_Size_cm']].astype
     
 df['Screen_Size_cm'] = df['Screen_Size_cm']/2.54
 df.rename(columns={'Screen_Size_cm':'Screen_Size_in'}, inplace=True)
+df[['Screen_Size_in']] = np.round(df[['Screen_Size_in']],2)
 
 df['Weight_kg'] = df['Weight_kg']*2.205
 df.rename(columns={'Weight_kg':'Weight_lbs'}, inplace=True)
+df[['Weight_lbs']] = np.round(df[['Weight_lbs']],2)
 
 df['CPU_frequency'] = df['CPU_frequency']/df['CPU_frequency'].max()
 
@@ -59,10 +61,10 @@ df.drop("Screen", axis=1, inplace=True)
 df = pd.concat([df, dummy_variable_1], axis=1)
 
 
-# print(df.head())
+print(df.head())
 # print(df.info())
 # print(df.describe())
 # print(df["Manufacturer"].unique())
 # print(dummy_variable_1)
 
-df.to_csv('laptop_wrangling2.csv')
+# df.to_csv('laptop_wrangling2.csv')
