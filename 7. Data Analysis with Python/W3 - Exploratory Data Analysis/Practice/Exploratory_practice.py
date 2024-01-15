@@ -103,11 +103,11 @@ grouped_test1 = df_gptest.groupby(['drive-wheels','body-style'],as_index=False)[
 grouped_pivot = grouped_test1.pivot(index='drive-wheels',columns='body-style')
 # fill missing values with 0
 grouped_pivot = grouped_pivot.fillna(0)
-# print(grouped_pivot)
+print(grouped_pivot)
 
 # Heat Map visualization of drive-wheels, body-style, and price
 plt.pcolor(grouped_pivot, cmap='RdBu')
-plt.colorbar()
+# plt.colorbar()
 
 # Fix the graph
 fig, ax = plt.subplots()
