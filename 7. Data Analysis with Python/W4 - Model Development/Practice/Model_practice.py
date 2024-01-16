@@ -22,7 +22,8 @@ lm = LinearRegression()
 # X - Predictor/ Independent Variable
 # Y - Response/ Dependent Variable
 X = df[['highway-mpg']]
-Y = df[['price']]
+# Use single bracket to get 1D array
+Y = df['price']
 
 # Fit the linear model
 lm.fit(X,Y)
@@ -85,12 +86,11 @@ lm.fit(Z, df['price'])
 Y_hat = lm.predict(Z)
 # print(Y_hat)
 
-# Plot
+# Distribution Plot
 # width = 12
 # height = 10
 
 # plt.figure(figsize=(width, height))
-
 
 # ax1 = sns.distplot(df['price'], hist=False, color="r", label="Actual Value")
 # sns.distplot(Y_hat, hist=False, color="b", label="Fitted Values" , ax=ax1)
@@ -130,7 +130,7 @@ p = np.poly1d(f)
 # print(p)
 
 # Plot the function
-# PlotPolly(p, x, y, 'highway-mpg')
+PlotPolly(p, x, y, 'highway-mpg')
 # print(np.polyfit(x, y, 3))
 
 # Polynomia Features object of degree 2:
@@ -154,6 +154,12 @@ pipe.fit(Z,y)
 ypipe = pipe.predict(Z)
 
 # print(ypipe[0:4])
+
+# MSE & R^2
+mse6 = mean_squared_error(Y, ypipe)
+r26  = r2_score(Y, ypipe)
+print('The R-square is: ', r26)
+print('MSE:', mse6)
 
 # MEASURE FOR IN SAMPLE EVALUATION
 
