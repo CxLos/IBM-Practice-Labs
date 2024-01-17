@@ -52,14 +52,14 @@ x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.
 
 # 2-2. To identify the point of overfitting the model on the parameter "CPU_frequency", you'll need to create polynomial features using the single attribute. You need to evaluate the R^2 scores of the model created using different degrees of polynomial features, ranging from 1 to 5. Save this set of values of R^2 score as a list.
 
-# Rsqu_test = []
-# order = [1, 2, 3, 4, 5]
-# for n in order:
-#     pr = PolynomialFeatures(degree=n)
-#     x_train_pr = pr.fit_transform(x_train[['CPU_frequency']])
-#     x_test_pr = pr.fit_transform(x_test[['CPU_frequency']])    
-#     lre.fit(x_train_pr, y_train)
-#     Rsqu_test.append(lre.score(x_test_pr, y_test))
+Rsqu_test = []
+order = [1, 2, 3, 4, 5]
+for n in order:
+    pr = PolynomialFeatures(degree=n)
+    x_train_pr = pr.fit_transform(x_train[['CPU_frequency']])
+    x_test_pr = pr.fit_transform(x_test[['CPU_frequency']])    
+    lre.fit(x_train_pr, y_train)
+    Rsqu_test.append(lre.score(x_test_pr, y_test))
 
 # 2-3. Plot the values of R^2 scores against the order. Note the point where the score drops.
 
@@ -84,35 +84,35 @@ x_test_pr = pr.fit_transform(x_test[['CPU_frequency','RAM_GB', 'Storage_GB_SSD',
 
 # 3-2. Create a Ridge Regression model and evaluate it using values of the hyperparameter alpha ranging from 0.001 to 1 with increments of 0.001. Create a list of all Ridge Regression R^2 scores for training and testing data. 
 
-Rsqu_test = []
-Rsqu_train = []
-Alpha = 10 * np.arange(0.001,1,0.001)
-pbar = tqdm(Alpha)
+# Rsqu_test = []
+# Rsqu_train = []
+# Alpha = 10 * np.arange(0.001,1,0.001)
+# pbar = tqdm(Alpha)
 
-for alpha in pbar:
-    RigeModel = Ridge(alpha=alpha) 
-    RigeModel.fit(x_train_pr, y_train)
-    test_score, train_score = RigeModel.score(x_test_pr, y_test), RigeModel.score(x_train_pr, y_train)
+# for alpha in pbar:
+#     RigeModel = Ridge(alpha=alpha) 
+#     RigeModel.fit(x_train_pr, y_train)
+#     test_score, train_score = RigeModel.score(x_test_pr, y_test), RigeModel.score(x_train_pr, y_train)
     
-    pbar.set_postfix({"Test Score": test_score, "Train Score": train_score})
+#     pbar.set_postfix({"Test Score": test_score, "Train Score": train_score})
 
-    Rsqu_test.append(test_score)
-    Rsqu_train.append(train_score)
+#     Rsqu_test.append(test_score)
+#     Rsqu_train.append(train_score)
 
 
 # 3-3. Plot the R^2 values for training and testing sets with respect to the value of alpha
-width = 12
-height = 10
-plt.figure(figsize=(width, height))
+# width = 12
+# height = 10
+# plt.figure(figsize=(width, height))
 
-plt.plot(Alpha,Rsqu_test, label='validation data  ')
-plt.plot(Alpha,Rsqu_train, 'r', label='training Data ')
-plt.xlabel('alpha')
-plt.ylabel('R^2')
-plt.ylim(0,1)
-plt.legend()
-plt.show()
-plt.close()
+# plt.plot(Alpha,Rsqu_test, label='validation data  ')
+# plt.plot(Alpha,Rsqu_train, 'r', label='training Data ')
+# plt.xlabel('alpha')
+# plt.ylabel('R^2')
+# plt.ylim(0,1)
+# plt.legend()
+# plt.show()
+# plt.close()
 
 
 # TASK 4: GRID SEARCH ------------------------------------------------------------------------------------

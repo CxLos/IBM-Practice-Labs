@@ -157,7 +157,10 @@ ypipe = pipe.predict(Z)
 # print(ypipe[0:4])
 
 # MSE & R^2
+
+# mean_squared_error(target_values, predicted_target_values)
 mse6 = mean_squared_error(Y, ypipe)
+# r2_score(target_values, predicted_target_values)
 r26  = r2_score(Y, ypipe)
 print('The R-square is: ', r26)
 print('MSE:', mse6)
@@ -169,6 +172,7 @@ print('MSE:', mse6)
 X = df[['highway-mpg']]
 Y = df[['price']]
 lm.fit(X, Y)
+
 # Find the R^2
 # print('The R-square is: ', lm.score(X, Y))
 
@@ -261,6 +265,7 @@ lm2.fit(Z, df['price'])
 # 4. Create an 11 order polynomial model with the variables x, y from above
 f1 = np.polyfit(x, y, 11)
 p1 = np.poly1d(f)
+# print(p1)
 
 # 5. Create a pipeline that standardizes the data, then produces a prediction using a linear regression model using the features Z and target y.
 Z = df[['horsepower', 'curb-weight', 'engine-size', 'highway-mpg']]
