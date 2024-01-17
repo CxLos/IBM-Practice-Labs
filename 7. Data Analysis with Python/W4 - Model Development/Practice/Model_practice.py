@@ -16,6 +16,7 @@ df = pd.read_csv(filepath)
 # print(df.head())
 # print(df.columns)
 
+# Create linear regression obj and store it in variable
 lm = LinearRegression()
 # print(lm)
 
