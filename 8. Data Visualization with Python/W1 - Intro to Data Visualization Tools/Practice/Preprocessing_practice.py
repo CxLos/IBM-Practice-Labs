@@ -1,6 +1,6 @@
 # IMPORTS ----------------------------------------------------------------------------------------------------
 import matplotlib.pyplot as plt 
-import numpy as np  # useful for many scientific computing in Python
+import numpy as np 
 import pandas as pd
 
 # DATA ------------------------------------------------------------------------------------------------------
@@ -104,8 +104,8 @@ se_asia = df_can[condition2]
 
 # Sort df by 'Total' Column in descending order
 df_can.sort_values(by='Total', ascending=False, axis=0, inplace=True)
-top_5 = df_can.iloc[:10, [0,1,2,37]]
-# print(top_5)
+top_5 = df_can.iloc[:10, [0,1,37]]
+print(top_5)
 
 # QUESTIONS -----------------------------------------------------------------------------------------------
 
