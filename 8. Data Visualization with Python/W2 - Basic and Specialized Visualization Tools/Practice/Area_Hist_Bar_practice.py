@@ -90,7 +90,7 @@ df_bottom_5.index = df_bottom_5.index.map(int)
 # ax.set_xlabel('Years')
 # plt.show()
 
-# HISTOGRAMS --------------------------------------------------------------------------------------------------
+# HISTOGRAMS ---------------------------------------------------------------------------------------------
 
 # Quickly check stats for 2013
 # print(df_can['2013'].head())
@@ -240,6 +240,5 @@ all_connection_styles = patches.ConnectionStyle.get_styles()
 all_styles = plt.style.available
 # Print the list of plot styles
 # print(all_styles)
-
 
 # df_can.to_excel('Canada_Immigration4.xlsx')
