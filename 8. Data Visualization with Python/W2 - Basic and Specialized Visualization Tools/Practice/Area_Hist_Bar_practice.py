@@ -13,8 +13,15 @@ mpl.style.use('ggplot')
 
 df_can = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/Canada.csv')
 
+# Sort df in descending order
+df_can.sort_values(['Total'], ascending=False, axis=0, inplace=True)
+
 # Set Index
 df_can.set_index('Country', inplace=True)
+
+df_continents = df_can.groupby('Continent', axis=0).sum()
+df_continents = df_continents.iloc[:, [36]]
+# print(df_continents)
 
 # Check dimensions
 # print('data dimensions:', df_can.shape)
@@ -27,9 +34,6 @@ years = list(map(str, range(1980, 2014)))
 #     print(name, hex)
 
 # AREA PLOTS -------------------------------------------------------------------------------------------------
-
-# Sort df in descending order
-df_can.sort_values(['Total'], ascending=False, axis=0, inplace=True)
 
 # get the top 5 entries
 df_top5 = df_can.head()
@@ -214,12 +218,12 @@ df_top15 = df_can.head(15)
 # df_top15.index = df_top15.index.map(int)
 # print(df_top15)
 
-df_top15.plot(kind='barh', figsize=(12,12))
+# df_top15.plot(kind='barh', figsize=(12,12))
 
-plt.xlabel('Year') 
-plt.ylabel('Number of immigrants')
-plt.title('Immigration to Canada from top 15 countries') 
-plt.show()
+# plt.xlabel('Year') 
+# plt.ylabel('Number of immigrants')
+# plt.title('Immigration to Canada from top 15 countries') 
+# plt.show()
 
 
 # PRINTS ------------------------------------------------------------------------------------------------------
