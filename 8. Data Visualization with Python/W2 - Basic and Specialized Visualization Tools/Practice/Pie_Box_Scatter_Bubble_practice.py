@@ -285,12 +285,14 @@ ax1 = df_can_t.plot(kind='scatter',
                     alpha=0.5,
                     color="blue",
                     s=norm_argentina * 2000 + 10, # sets size of values based on norm_argentina
-                    ax=ax0
+                    ax=ax0 # This plot should be overlaid on ax0
                     )
 
 ax0.set_ylabel('Number of Immigrants')
 ax0.set_title('Immigration from Brazil and Argentina from 1980 to 2013')
 ax0.legend(['Brazil', 'Argentina'], loc='upper left', fontsize='x-large')
+
+plt.show()
 
 # Immigration from China & India to Canada from 1980-2013
  
@@ -323,6 +325,8 @@ ax1 = df_can_t.plot(kind='scatter',
 ax0.set_ylabel('Number of Immigrants')
 ax0.set_title('Immigration from China and India from 1980 - 2013')
 ax0.legend(['China', 'India'], loc='upper left', fontsize='x-large')
+
+# plt.show()
 
 # PRINTS ----------------------------------------------------------------------------------------------------
 
