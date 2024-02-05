@@ -9,7 +9,8 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches # needed for waffle Charts
 import seaborn as sns
-import wordcloud
+from wordcloud import WordCloud, STOPWORDS
+import urllib.request
 
 mpl.style.use('ggplot') # optional: for ggplot-like style
 
@@ -148,7 +149,7 @@ categoriess = df_ci.index.values # categories
 
 colormap = plt.cm.coolwarm # color map class
 
-create_waffle_chart(categoriess, valuess, height, width, colormap)
+# create_waffle_chart(categoriess, valuess, height, width, colormap)
 
 #Set up the Waffle chart figure
 
@@ -167,7 +168,132 @@ create_waffle_chart(categoriess, valuess, height, width, colormap)
 
 # WORD CLOUD ---------------------------------------------------------------------------------------------
 
+# Download the file for Alice in Wonderland
+alice_novel = urllib.request.urlopen('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/alice_novel.txt').read().decode("utf-8")
 
+# Create mask
+alice_mask = np.array(Image.open(urllib.request.urlopen('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/labs/Module%204/images/alice_mask.png')))
+
+# The line `stopwords = set(STOPWORDS)` is creating a set of stopwords. Stopwords are commonly used
+# words (such as "the", "and", "is", etc.) that are often removed from text data because they do not
+# carry significant meaning. In this case, the set of stopwords is being used for creating a word
+# cloud from the text data.
+stopwords = set(STOPWORDS)
+stopwords.add('said') # add the words said to stopwords
+
+# instantiate a word cloud object
+alice_wc = WordCloud(background_color='white', max_words=2000, mask=alice_mask, stopwords=stopwords)
+
+# generate the word cloud
+alice_wc.generate(alice_novel)
+
+# fig = plt.figure(figsize=(14, 18))
+
+# display the word cloud
+# plt.imshow(alice_wc, cmap=plt.cm.gray, interpolation='bilinear')
+# plt.imshow(alice_wc, interpolation='bilinear')
+# plt.axis('off')
+# plt.show()
+
+# Generate sample text data from Canada df
+total_immigration = df_can['Total'].sum()
+total_immigration
+
+max_words = 90
+word_string = ''
+for country in df_can.index.values:
+     # check if country's name is a single-word name
+    if country.count(" ") == 0:
+        # How many words to generate per country
+        repeat_num_times = int(df_can.loc[country, 'Total'] / total_immigration * max_words)
+        # Concatenate country's name to word string equal to the amt above.
+        word_string = word_string + ((country + ' ') * repeat_num_times)
+
+# print(word_string)
+
+# create the word cloud
+wordcloud = WordCloud(background_color='white').generate(word_string)
+
+# display the cloud
+# plt.figure(figsize=(14, 18))
+
+# plt.imshow(wordcloud, interpolation='bilinear')
+# plt.axis('off')
+# plt.show()
+
+# PLOTTING WITH SEABORN -------------------------------------------------------------------------------
+
+df_can['Continent'].unique()
+df_can1 = df_can.replace('Latin America and the Caribbean', 'L-America')
+df_can1 = df_can1.replace('Northern America', 'N-America')
+df_Can2=df_can1.groupby('Continent')['Total'].mean()
+# print(df_Can2)
+
+# Count Plot is like histogram but for categorical values
+# plt.figure(figsize=(15, 10))
+# sns.countplot(x='Continent', data=df_can1)
+# sns.barplot(x='Continent', y='Total', data=df_can1)
+# plt.show()
+
+# REGRESSION PLOTS -----------------------------------------------------------------------------------
+
+years = list(map(str, range(1980, 2014)))
+# we can use the sum() method to get the total population per year
+df_tot = pd.DataFrame(df_can[years].sum(axis=0))
+
+# change the years to type float (useful for regression later on)
+df_tot.index = map(float, df_tot.index)
+
+# reset the index to put in back in as a column in the df_tot dataframe
+df_tot.reset_index(inplace=True)
+
+# rename columns
+df_tot.columns = ['year', 'total']
+
+# print(df_tot.head())
+
+# plt.figure(figsize=(15, 10))
+
+# sns.set(font_scale=1.5)
+# sns.set_style('whitegrid')
+
+# ax = sns.regplot(x='year', y='total', data=df_tot, color='green', marker='+', 
+#                  scatter_kws={'s': 200,'edgecolors': 'black'}) # set size to 200
+# ax.set(xlabel='Year', ylabel='Total Immigration')
+# ax.set_title('Total Immigration to Canada from 1980 - 2013')
+# plt.show()
+
+# Immigration from Norway, Sweden, and Denmark
+    
+df_countries = df_can.loc[['Denmark', 'Norway', 'Sweden'], years].transpose()
+
+# create df_total by summing across three countries for each year
+df_total = pd.DataFrame(df_countries.sum(axis=1))
+
+# reset index in place
+df_total.reset_index(inplace=True)
+
+# rename columns
+df_total.columns = ['year', 'total']
+
+# change column year from string to int to create scatter plot
+df_total['year'] = df_total['year'].astype(int)
+
+# define figure size
+plt.figure(figsize=(15, 10))
+
+# define background style and font size
+sns.set(font_scale=1.5)
+sns.set_style('whitegrid')
+
+# generate plot and add title and axes labels
+ax = sns.regplot(x='year', y='total', data=df_total, color='green', marker='+', scatter_kws={'s': 200})
+ax.set(xlabel='Year', ylabel='Total Immigration')
+ax.set_title('Total Immigrationn from Denmark, Sweden, and Norway to Canada from 1980 - 2013')
+# plt.show()
+
+print(df_total)
+# print(df_countries)
 
 # PRINTS ----------------------------------------------------------------------------------------------
 
