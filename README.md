@@ -3,15 +3,6 @@
 ## Description
 
 
-
-## Table of Contents
-
-
-
-## Usage
-
-
-
 ## License
 
 MIT License
