@@ -1,4 +1,3 @@
-#Import and setup matplotlib:
 # IMPORTS ----------------------------------------------------------------------------------------------
 
 import numpy as np  # useful for many scientific computing in Python
