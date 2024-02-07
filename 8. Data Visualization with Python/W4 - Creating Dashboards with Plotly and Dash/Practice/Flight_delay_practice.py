@@ -58,7 +58,9 @@ app.layout = html.Div(children=[
                                     style={'display': 'flex'}),
 
                         # Segment 3
-                        html.Div(dcc.Graph(id='late-plot'), style={'width':'65%'})
+                        html.Div(
+                                  dcc.Graph(id='late-plot'),
+                                    style={'width':'65%'})
                         ])
 
 # Add computation to callback function and return graph
