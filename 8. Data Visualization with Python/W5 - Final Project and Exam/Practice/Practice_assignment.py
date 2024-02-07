@@ -190,13 +190,40 @@ def reg_year_display(input_region,input_year):
             dcc.Graph(figure=fig2) ]
 
 # Run app
-if __name__ == '__main__':
-    app.run_server()
+# if __name__ == '__main__':
+#     app.run_server()
+
+# r_df = df[df['Recession'] == 1]
+
+# # New Data
+# exec_data = r_df[r_df['Vehicle_Type'] == 'Executivecar']
+# med_data = r_df[r_df['Vehicle_Type'] == 'Mediumfamilycar']
+# sml_data = r_df[r_df['Vehicle_Type'] == 'Smallfamilycar']
+# sport_data = r_df[r_df['Vehicle_Type'] == 'Sports']
+# mini_data = r_df[r_df['Vehicle_Type'] == 'Supperminicar']
+
+# # Sizes
+# exec_total = exec_data['Advertising_Expenditure'].sum()
+# med_total = med_data['Advertising_Expenditure'].sum()
+# sml_total = sml_data['Advertising_Expenditure'].sum()
+# sport_total = sport_data['Advertising_Expenditure'].sum()
+# mini_total = mini_data['Advertising_Expenditure'].sum()
+
+# # pie Chart
+# plt.figure(figsize=(8, 6))
+
+# labels = ['Executivecar', 'Mediumfamilycar','Smallfamilycar','Sports','Supperminicar']
+# sizes = [exec_total, med_total, sml_total, sport_total, mini_total]
+# plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+
+# plt.title('Advertising Expenditure of XYZAutomotive by Vehicle Type during')
+
+# plt.show()
 
 # PRINTS ----------------------------------------------------------------------------------------------
 
 # print(df.head())
-# print(df.columns)
+print(df.columns)
 # print(df.shape)
 # print(df['Region'].unique())
 # data.to_csv('historical_wildfires.csv')
