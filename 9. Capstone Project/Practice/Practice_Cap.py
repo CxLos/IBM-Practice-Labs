@@ -12,6 +12,7 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 from dash import no_update
 import requests
+import csv
 import json
 import re
 import os 
@@ -19,6 +20,7 @@ from PIL import Image
 from IPython.display import IFrame
 import flask
 from flask import request, jsonify
+from bs4 import BeautifulSoup 
 
 # Data ---------------------------------------------------------------------------------------------------
 
@@ -27,112 +29,6 @@ from flask import request, jsonify
 # data = r'C:\Users\CxLos\OneDrive\Documents\IBM Data Analyst Professional Certificate\IBM Practice Labs\9. Capstone Project\Data\m1_survey_data.csv'
 
 # df = pd.read_csv(data)
-
-# ------------------------------------------- FLASK CODE -----------------------------------------------
-
-# jobs_url="https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/labs/module%201/Accessing%20Data%20Using%20APIs/jobs.json"
-
-# jr = requests.get(jobs_url)
-
-# def get_data(key,value,current):
-    
-#     results = list()
-
-#     pattern_dict = {
-#         'C'      : '(C)',
-#         'C++'    : '(C\+\+)',
-#         'Java'   :'(Java)',
-#         'C#'     : '(C\#)',
-#         'Python' :'(Python)',
-#         'Scala' : '(Scala)',
-#         'Oracle' : '(Oracle)',
-#         'SQL Server': '(SQL Server)',
-#         'MySQL Server' :'(MySQL Server)',
-#         'PostgreSQL':'(PostgreSQL)',
-#         'MongoDB'    : '(MongoDB)',
-#         'JavaScript'    : '(JavaScript)',
-#         'Los Angeles' :'(Los Angeles)',
-#         'New York':'(New York)',
-#         'San Francisco':'(San Francisco)',
-#         'Washington DC':'(Washington DC)',
-#         'Seattle':'(Seattle)',
-#         'Austin':'(Austin)',
-#         'Detroit':'(Detroit)',
-#     }
-
-#     for rec in current:
-#         print(rec[key])
-#         print(type(rec[key]))
-#         print(rec[key].find(value))
-#         #if rec[key].find(value) != -1:
-#         import re
-#         #reex_str = """(C)|(C\+\+)|(JavaScript)|(Java)|(C\#)|(Python)|(Scala)|(Oracle)|(SQL Server)|(MySQL Server)|(PostgreSQL)|(MongoDB)"""
-#         if re.search(pattern_dict[value],rec[key]) != None:
-#             results.append(rec)
-#     return results
-
-# app = flask.Flask(__name__)
-
-# data = None
-
-# # with open(jobs_url,encoding='utf-8') as f:
-# #     # returns JSON object as
-# #     # a dictionary
-# #     data = json.load(f)
-    
-# @app.route('/', methods=['GET'])
-# def home():
-    
-#     return '''<h1>Welcome to flask JOB search API</p>'''
-
-# @app.route('/data/all', methods=['GET'])
-# def api_all():
-#     response = requests.get(jobs_url)
-#     data = response.json()
-#     return jsonify(data)
-
-# @app.route('/data', methods=['GET'])
-# def api_id():
-    
-#     # Check if keys such as Job Title,KeySkills, Role Category and others  are provided as part of the URL.
-#     #  Assign the keys to the corresponding variables..
-#     # If no key is provided, display an error in the browser.
-
-#     res = None
-#     for req in request.args:
-        
-#         if req == 'Job Title':
-#             key = 'Job Title'
-#         elif req == 'Job Experience Required' :
-#             key='Job Experience Required'
-#         elif req == 'Key Skills' :
-#             key='Key Skills'`
-#         elif req == 'Role Category' :
-#             key='Role Category'
-#         elif req == 'Location' :
-#             key='Location'
-#         elif req == 'Functional Area' :
-#             key='Functional Area'
-#         elif req == 'Industry' :
-#             key='Industry'
-#         elif req == 'Role' :
-#             key='Role'
-#         elif req=="id":
-#              key="id"
-#         else:
-#             pass
-    
-#         value = request.args[key]
-#         if (res==None):
-#             res = get_data(key,value,data)
-#         else:
-#             res = get_data(key,value,res)
-
-#     # Use the jsonify function from Flask to convert our list of
-#     # Python dictionaries to the JSON format.
-#     return jsonify(res)
-
-# app.run()
 
 # 1. -------------------------------------- DATA COLLECTION ---------------------------------------------
 
@@ -171,7 +67,7 @@ from flask import request, jsonify
 # with open(path1,'wb') as f:
 #     f.write(r1.content)
 
-# Image.open(path) #open image
+# Image.open(path) # open image
 
 # url2 = 'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/PY0101EN/labs/example1.txt'
 # r2=requests.get(url2)
@@ -229,11 +125,80 @@ from flask import request, jsonify
 
 # 2. --------------------------------------- DATA WRANGLING -----------------------------------------------
 
+# url = "http://www.ibm.com"
 
+# # get the contents of the webpage in text format and store in a variable called data
+# data  = requests.get(url).text 
+
+# soup = BeautifulSoup(data,"html5lib")  # create a soup object using the variable 'data'
+
+# for link in soup.find_all('a'):  # in html anchor/link is represented by the tag <a>
+#     print('Links:', link.get('href'))
+
+# for link in soup.find_all('img'):# in html image is represented by the tag <img>
+#     print('Images:', link.get('src'))
+
+url1 = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/labs/datasets/HTMLColorCodes.html"
+
+# get the contents of the webpage in text format and store in a variable called data
+data  = requests.get(url1).text
+soup = BeautifulSoup(data,"html5lib")
+table = soup.find('table') # in html table is represented by the tag <table>
+
+#Get all rows from the table
+# for row in table.find_all('tr'): # in html table row is represented by the tag <tr>
+#     # Get all columns in each row.
+#     cols = row.find_all('td') # in html a column is represented by the tag <td>
+#     color_name = cols[2].getText() # store the value in column 3 as color_name
+#     color_code = cols[3].getText() # store the value in column 4 as color_code
+#     print("{}--->{}".format(color_name,color_code))
+
+    #this url contains the data you need to scrape
+# url2 = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/labs/datasets/Programming_Languages.html"
+
+# # get the contents of the webpage in text format and store in a variable called data
+# data2  = requests.get(url2).text
+# soup2 = BeautifulSoup(data2,"html5lib")
+# table2 = soup2.find('table')
+# print(table2)
+
+# for row in table2.find_all('tr'):
+   
+#     cols = row.find_all('td') 
+#     lang_name = cols[1].getText() 
+#     avg_salary = cols[3].getText()
+#     print("{}--->{}".format(lang_name, avg_salary))
+
+    # Open a CSV file in write mode
+# with open('programming_languages.csv', mode='w', newline='') as file:
+#     writer = csv.writer(file)
+    
+#     # Write the header row
+#     writer.writerow(['Language Name', 'Average Salary'])
+    
+#     # Iterate over each row in the table
+#     for row in table2.find_all('tr'):
+#         cols = row.find_all('td')
+#         if len(cols) > 0:  # Ensure there are columns in the row
+#             lang_name = cols[1].getText()
+#             avg_salary = cols[3].getText()
+#             print("{} ---> {}".format(lang_name, avg_salary))
+            # writer.writerow([lang_name, avg_salary])
+
+# print("Data has been saved to programming_languages.csv")
 
 # 3. -------------------------------------- EXPLORATORY DATA -----------------------------------------------
 
+dataset_url = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m1_survey_data.csv"
 
+df = pd.read_csv(dataset_url)
+
+print(df.head())
+print('# of Rows:', df.shape[0]) # number of rows
+print('# of Columns:', df.shape[1]) # number of columns
+print(df.dtypes)
+print()
+print()
 
 # 4. ------------------------------------- DATA VISUALIZATION ----------------------------------------------
 
