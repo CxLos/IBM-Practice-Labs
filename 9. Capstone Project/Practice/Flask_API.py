@@ -154,7 +154,7 @@ def export_python_jobs_la():
     excel_file_path = 'python_jobs_la.xlsx'
     
     # Write the DataFrame to an Excel file
-    df.to_excel(excel_file_path, index=False)
+    # df.to_excel(excel_file_path, index=False)
     
     # Return a message indicating that the file has been created
     return f'Excel file for Python jobs in Los Angeles has been created: {excel_file_path}'
@@ -165,11 +165,19 @@ py_jobs = get_number_of_jobs_T("Python")
 
 location = "New York"
 ny_jobs = get_number_of_jobs_L(location)
-# print(f"Number of job openings in {location}: {ny_jobs}")
+print(f"Number of job openings in {location}: {ny_jobs}")
 
 location = "Los Angeles"
 la_jobs = get_number_of_jobs_L(location)
-# print(f"Number of job openings in {location}: {la_jobs}")
+print(f"Number of job openings in {location}: {la_jobs}")
+
+location = "Seattle"
+la_jobs = get_number_of_jobs_L(location)
+print(f"Number of job openings in {location}: {la_jobs}")
+
+location = "Washington DC"
+la_jobs = get_number_of_jobs_L(location)
+print(f"Number of job openings in {location}: {la_jobs}")
 
 # get_number_of_jobs_PL()
 # get_number_of_jobs_SKILL_LOC('Python','New York')
@@ -192,7 +200,7 @@ excel_file_path = 'python_jobs_la.xlsx'
 # print(f'Excel file for Python jobs in Los Angeles has been created: {excel_file_path}')
 
 
-app.run()
+# app.run()
 
 # wb=Workbook()                        # create a workbook object
 # ws=wb.active                         # use the active worksheet

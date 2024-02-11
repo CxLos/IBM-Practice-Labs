@@ -138,12 +138,12 @@ from bs4 import BeautifulSoup
 # for link in soup.find_all('img'):# in html image is represented by the tag <img>
 #     print('Images:', link.get('src'))
 
-url1 = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/labs/datasets/HTMLColorCodes.html"
+# url1 = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/labs/datasets/HTMLColorCodes.html"
 
-# get the contents of the webpage in text format and store in a variable called data
-data  = requests.get(url1).text
-soup = BeautifulSoup(data,"html5lib")
-table = soup.find('table') # in html table is represented by the tag <table>
+# # get the contents of the webpage in text format and store in a variable called data
+# data  = requests.get(url1).text
+# soup = BeautifulSoup(data,"html5lib")
+# table = soup.find('table') # in html table is represented by the tag <table>
 
 #Get all rows from the table
 # for row in table.find_all('tr'): # in html table row is represented by the tag <tr>
@@ -187,18 +187,119 @@ table = soup.find('table') # in html table is represented by the tag <table>
 
 # print("Data has been saved to programming_languages.csv")
 
+# dataset_url = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m1_survey_data.csv"
+
+# df = pd.read_csv(dataset_url)
+
+# print(df.head())
+# print('# of Rows:', df.shape[0]) # number of rows
+# print('# of Columns:', df.shape[1]) # number of columns
+# print(df.dtypes)
+
+# df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m1_survey_data.csv")
+
+# # print(df.head(10))
+# # print(df.shape)
+# # print(df.columns)
+
+# # FINDING & REMOVING DUPLICATES
+# duplicate_rows = df[df.duplicated()]
+# duplicate_len = len(duplicate_rows)
+# df_unique = df.drop_duplicates()
+
+# # print("Shape of DataFrame before removing duplicates:", df.shape[0])
+# # print("Shape of DataFrame after removing duplicates:", df_unique.shape[0])
+# # print('Amt of duplicate rows:', duplicate_len)
+
+# # MISSING & IMPUTING VALUES
+# df_null = df_unique.isnull()
+# df_null_count = df_null.value_counts()
+
+# # print('Amt of null vlaues in df:', len(df_null_count))
+
+# work_loc = df['WorkLoc']
+# work_loc_len = len(df['WorkLoc'])
+# # print("""Number of Rows in 'WorkLoc' column:""", work_loc_len)
+
+# work_loc_null = df['WorkLoc'].isnull().sum()
+# # print("""# of missing data in 'WorkLoc' column:""", work_loc_null)
+
+# # Has values
+# work_loc_not_null = df['WorkLoc'].notnull().sum()
+# # print("""# of rows with data in 'WorkLoc' column:""", work_loc_not_null)
+
+# # Most frequent work location
+# most_common_work_loc1 = df['WorkLoc'].value_counts()
+# most_common_work_loc2 = df['WorkLoc'].value_counts().sum()
+# least_common_work_loc = df['WorkLoc'].value_counts().idxmin()
+# most_common_work_loc = df['WorkLoc'].value_counts().idxmax()
+# # print("WorkLoc value counts:", most_common_work_loc1)
+# # print('Total:', most_common_work_loc2)
+# # print("Most common work location:", most_common_work_loc)
+# # print("Least common work location:", least_common_work_loc)
+
+# # Replace missing values
+# df['WorkLoc'].replace(np.nan, most_common_work_loc, inplace=True)
+# work_loc_null = df['WorkLoc'].isnull().sum()
+# # print("""# of missing data in 'WorkLoc' column after replacing:""", work_loc_null)
+
+# # NORMALIZING DATA
+
+# comp_mean = df["CompTotal"].value_counts().mean()
+# comp_max = df['CompTotal'].max()
+# df['CompTotal'].replace(np.nan, comp_mean, inplace=True)
+
+# # print('CompTotal mean:', comp_mean)
+
+# # comp_t = df['CompTotal']
+# # comp_max = df['CompTotal'].max()
+# # df['Normalized_CompTotal'] = comp_t / comp_max
+# # norm_comp = df['Normalized_CompTotal']
+
+
+# def normalize_compensation(row):
+#     if row['CompFreq'] == 'Yearly':
+#         return row['CompTotal'] / comp_max
+#     elif row['CompFreq'] == 'Monthly':
+#         return row['CompTotal'] * 12 / (comp_max * 12)
+#     elif row['CompFreq'] == 'Weekly':
+#         return row['CompTotal'] * 52 / (comp_max * 52)
+#     else:
+#         return comp_mean / comp_max
+    
+# # Apply the function to create the new column
+# df['Normalized_CompTotal'] = df.apply(normalize_compensation, axis=1)
+# median_norm = df['Normalized_CompTotal'].median()
+# print(median_norm)
+
+# df.sort_values(by='Normalized_CompTotal', ascending=False, axis=0, inplace=True)
+# print(df.head(15))
+# print(df[['Respondent','Normalized_CompTotal']].head(30))
+# print(df[['Respondent','Normalized_CompTotal']].tail(10))
+
+# print(norm_comp.head(10))
+
+# Unique values
+# comp_freq_unique = df['CompFreq'].unique()
+# print('CompFreq categories:', comp_freq_unique)
+
+# print(df['Respondent'].duplicated().vlaue_counts())
+
 # 3. -------------------------------------- EXPLORATORY DATA -----------------------------------------------
 
-dataset_url = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m1_survey_data.csv"
+df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m2_survey_data.csv")
 
-df = pd.read_csv(dataset_url)
+# DISTRIBUTION
 
-print(df.head())
-print('# of Rows:', df.shape[0]) # number of rows
-print('# of Columns:', df.shape[1]) # number of columns
-print(df.dtypes)
-print()
-print()
+
+
+# OUTLIERS
+
+
+
+# CORRELATION
+
+
 
 # 4. ------------------------------------- DATA VISUALIZATION ----------------------------------------------
 
