@@ -291,15 +291,106 @@ df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.c
 
 # DISTRIBUTION
 
+# Plot the distribution curve for the column 'ConvertedComp'
 
+tr = df[['ConvertedComp', 'CompFreq']]
+
+# plt.figure(figsize=(10, 6))
+# plt.hist(tr, bins=30, color='skyblue', edgecolor='black') 
+# sns.histplot(data=df, x='ConvertedComp', kde=True)
+# plt.title('Distribution of Converted Compensation')
+# plt.xlabel('Frequency')
+# plt.ylabel('Converted Compensation')
+# plt.grid(True)
+# plt.show()
+
+# Plot the Histogram
+
+# plt.figure(figsize=(10, 6))
+# plt.hist(tr, bins=30, color='skyblue', edgecolor='black') 
+# plt.hist(data=df, x='ConvertedComp', kde=True)
+# plt.title('Distribution of Converted Compensation')
+# plt.xlabel('Frequency')
+# plt.ylabel('Converted Compensation')
+# plt.grid(True)
+# plt.show()
+
+median = df['ConvertedComp'].median()
+print(median)
+
+# Number of Men
+man = df['Gender'] == 'Man'
+print("Number of Men:", man.sum())
+
+# Median ConvertedComp for women
+women = df[df['Gender'] == 'Woman']
+wmn_med = women['ConvertedComp'].median()
+print('Median ConvertedComp for Women:', wmn_med)
+
+# Histogram for Age
+df_age = df['Age'].dropna()
+
+count, bin_edges = np.histogram(df_age, 7)
+print(count)
+print(bin_edges)
+
+plt.figure(figsize= (10, 6))
+# sns.histplot(data=df, x='Age', kde=True, bins=bin_edges, linewidth=2, color='skyblue', edgecolor='black', alpha=0.7)
+df_age.plot(kind ='hist', 
+          figsize=(10, 6),
+          # bins=5,
+          alpha=0.6,
+          xticks=bin_edges,
+          edgecolor= 'black'
+          # color=['coral', 'darkslateblue', 'mediumseagreen']
+         )
+plt.title('Distribution of Age')
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+plt.tight_layout() 
+# plt.grid()
 
 # OUTLIERS
 
+# Find outliers using box-plot
+df_converted_comp = df['ConvertedComp']
+df_converted_comp.plot(kind='bar', figsize=(10,6))
+
+# IQR:
+lower = df['ConvertedComp'].describe()['25%']
+upper = df['ConvertedComp'].describe()['75%']
+print('IQR:', lower, '-->', upper)
+
+# How many outliers are there?
+# Calculate the interquartile range (IQR)
+Q1 = df['ConvertedComp'].quantile(0.25)
+Q3 = df['ConvertedComp'].quantile(0.75)
+IQR = Q3 - Q1
+print(IQR)
+
+# Calculate the lower and upper bounds
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+# Identify outliers
+outliers = df[(df['ConvertedComp'] < lower_bound) | (df['ConvertedComp'] > upper_bound)]
+
+# Count the number of outliers
+num_outliers = len(outliers)
+
+print("Number of outliers in 'ConvertedComp' column:", num_outliers)
+
+# Remove Outliers
+df_no_outliers = df[(df['ConvertedComp'] >= lower_bound) & (df['ConvertedComp'] <= upper_bound)]
 
 
 # CORRELATION
 
+# Find the correlation between 'Age' and all other numerical columns
 
+numeric_df = df.select_dtypes(include=['int64', 'float64'])
+age_corr = numeric_df.corr()['Age']
+print(age_corr)
 
 # 4. ------------------------------------- DATA VISUALIZATION ----------------------------------------------
 
@@ -308,7 +399,8 @@ df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.c
 # ----------------------------------------------- PRINTS ---------------------------------------------------
 
 # print(df.head())
-
+# print(df.columns)
+# print(df['ConvertedComp'])
 # df.to_csv('developer_surevey_result.csv')
 # df_job.to_json('jobs.json')
 # --------------------------------------------------------------------------------------------------------
