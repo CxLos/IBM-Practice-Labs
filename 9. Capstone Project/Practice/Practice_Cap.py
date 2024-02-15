@@ -21,6 +21,7 @@ from IPython.display import IFrame
 import flask
 from flask import request, jsonify
 from bs4 import BeautifulSoup 
+import sqlite3
 
 # Data ---------------------------------------------------------------------------------------------------
 
@@ -287,13 +288,13 @@ from bs4 import BeautifulSoup
 
 # 3. -------------------------------------- EXPLORATORY DATA -----------------------------------------------
 
-df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m2_survey_data.csv")
+# df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m2_survey_data.csv")
 
 # DISTRIBUTION
 
 # Plot the distribution curve for the column 'ConvertedComp'
 
-tr = df[['ConvertedComp', 'CompFreq']]
+# tr = df[['ConvertedComp', 'CompFreq']]
 
 # plt.figure(figsize=(10, 6))
 # plt.hist(tr, bins=30, color='skyblue', edgecolor='black') 
@@ -315,86 +316,118 @@ tr = df[['ConvertedComp', 'CompFreq']]
 # plt.grid(True)
 # plt.show()
 
-median = df['ConvertedComp'].median()
-print(median)
+# median = df['ConvertedComp'].median()
+# print(median)
 
 # Number of Men
-man = df['Gender'] == 'Man'
-print("Number of Men:", man.sum())
+# man = df['Gender'] == 'Man'
+# print("Number of Men:", man.sum())
 
 # Median ConvertedComp for women
-women = df[df['Gender'] == 'Woman']
-wmn_med = women['ConvertedComp'].median()
-print('Median ConvertedComp for Women:', wmn_med)
+# women = df[df['Gender'] == 'Woman']
+# wmn_med = women['ConvertedComp'].median()
+# print('Median ConvertedComp for Women:', wmn_med)
 
 # Histogram for Age
-df_age = df['Age'].dropna()
+# df_age = df['Age'].dropna()
 
-count, bin_edges = np.histogram(df_age, 7)
-print(count)
-print(bin_edges)
+# count, bin_edges = np.histogram(df_age, 7)
+# print(count)
+# print(bin_edges)
 
-plt.figure(figsize= (10, 6))
+# plt.figure(figsize= (10, 6))
 # sns.histplot(data=df, x='Age', kde=True, bins=bin_edges, linewidth=2, color='skyblue', edgecolor='black', alpha=0.7)
-df_age.plot(kind ='hist', 
-          figsize=(10, 6),
-          # bins=5,
-          alpha=0.6,
-          xticks=bin_edges,
-          edgecolor= 'black'
-          # color=['coral', 'darkslateblue', 'mediumseagreen']
-         )
-plt.title('Distribution of Age')
-plt.xlabel('Age')
-plt.ylabel('Frequency')
-plt.tight_layout() 
+# df_age.plot(kind ='hist', 
+#           figsize=(10, 6),
+#           # bins=5,
+#           alpha=0.6,
+#           xticks=bin_edges,
+#           edgecolor= 'black'
+#           # color=['coral', 'darkslateblue', 'mediumseagreen']
+#          )
+# plt.title('Distribution of Age')
+# plt.xlabel('Age')
+# plt.ylabel('Frequency')
+# plt.tight_layout() 
 # plt.grid()
 
 # OUTLIERS
 
 # Find outliers using box-plot
-df_converted_comp = df['ConvertedComp']
-df_converted_comp.plot(kind='bar', figsize=(10,6))
+# df_converted_comp = df['ConvertedComp']
+# df_converted_comp.plot(kind='bar', figsize=(10,6))
 
 # IQR:
-lower = df['ConvertedComp'].describe()['25%']
-upper = df['ConvertedComp'].describe()['75%']
-print('IQR:', lower, '-->', upper)
+# lower = df['ConvertedComp'].describe()['25%']
+# upper = df['ConvertedComp'].describe()['75%']
+# print('IQR:', lower, '-->', upper)
 
 # How many outliers are there?
 # Calculate the interquartile range (IQR)
-Q1 = df['ConvertedComp'].quantile(0.25)
-Q3 = df['ConvertedComp'].quantile(0.75)
-IQR = Q3 - Q1
-print(IQR)
+# Q1 = df['ConvertedComp'].quantile(0.25)
+# Q3 = df['ConvertedComp'].quantile(0.75)
+# IQR = Q3 - Q1
+# print(IQR)
 
 # Calculate the lower and upper bounds
-lower_bound = Q1 - 1.5 * IQR
-upper_bound = Q3 + 1.5 * IQR
+# lower_bound = Q1 - 1.5 * IQR
+# upper_bound = Q3 + 1.5 * IQR
 
 # Identify outliers
-outliers = df[(df['ConvertedComp'] < lower_bound) | (df['ConvertedComp'] > upper_bound)]
+# outliers = df[(df['ConvertedComp'] < lower_bound) | (df['ConvertedComp'] > upper_bound)]
 
 # Count the number of outliers
-num_outliers = len(outliers)
+# num_outliers = len(outliers)
 
-print("Number of outliers in 'ConvertedComp' column:", num_outliers)
+# print("Number of outliers in 'ConvertedComp' column:", num_outliers)
 
 # Remove Outliers
-df_no_outliers = df[(df['ConvertedComp'] >= lower_bound) & (df['ConvertedComp'] <= upper_bound)]
+# df_no_outliers = df[(df['ConvertedComp'] >= lower_bound) & (df['ConvertedComp'] <= upper_bound)]
 
 
 # CORRELATION
 
 # Find the correlation between 'Age' and all other numerical columns
 
-numeric_df = df.select_dtypes(include=['int64', 'float64'])
-age_corr = numeric_df.corr()['Age']
-print(age_corr)
+# numeric_df = df.select_dtypes(include=['int64', 'float64'])
+# age_corr = numeric_df.corr()['Age']
+# print(age_corr)
 
 # 4. ------------------------------------- DATA VISUALIZATION ----------------------------------------------
 
+url = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m4_survey_data.sqlite"
 
+url1 = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m4_survey_data.sqlite"
+filename = "m4_survey_data.sqlite"
+
+conn = sqlite3.connect("m4_survey_data.sqlite") # open a database connection
+cur = conn.cursor()
+
+df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m2_survey_data.csv")
+
+chunk = 100
+df.to_sql("SURVEY_DATA", conn, if_exists='replace', index=False, method="multi", chunksize=chunk)
+
+response = requests.get(url1)
+
+
+
+# with open(filename, 'wb') as f:
+#     f.write(response.content)
+#     print("File downloaded successfully.")
+
+# print all the tables names in the database
+# QUERY = """
+# SELECT name FROM sqlite_master WHERE type='table';
+# """
+# # the read_sql_query runs the sql query and returns the data as a dataframe
+# pd.read_sql_query(QUERY,conn)
+
+df = pd.read_sql_query("""
+select * from SURVEY_DATA limit 15;
+""", conn)
+
+print(df)
 
 # ----------------------------------------------- PRINTS ---------------------------------------------------
 
