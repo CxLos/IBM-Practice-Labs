@@ -497,11 +497,59 @@ ax0.set_title('CodeRevHrs vs. WorkWeekHrs with Age Bubble Size')
 
 # PIE CHART
 
+top_databases = df['DatabaseDesireNextYear'].value_counts().head(5)
+# top_databases
 
+# databases_worked = df['DatabaseWorkedWith'].value_counts().head(20)
+# databases_worked
+
+# Filter values containing 'sql' in the 'DatabaseWorkedWith' column and then count the occurrences
+databases_worked_filtered = df[df['DatabaseWorkedWith'].str.contains('sql', case=False, na=False)]['DatabaseWorkedWith'].value_counts()
+# databases_worked_filtered
+
+databases_worked_counts = databases_worked_filtered.sum()
+# databases_worked_counts
+
+# Add up all the values
+# total_counts = databases_worked_counts.sum()
+# total_counts
+
+top_lang = df['LanguageDesireNextYear'].value_counts().head(10)
+top_lang
+
+# df.columns
+
+# df_db = df.groupby(['DatabaseDesireNextYear'], as_index=False)['DatabaseDesireNextYear'].value_counts()
+# df_db.sort_values(['DatabaseDesireNextYear'], ascending=False, axis=0)
+
+# # df_db = df.groupby(['LanguageDesireNextYear'], as_index=False)['LanguageDesireNextYear'].value_counts()
+# # df_db.sort_values(['LanguageDesireNextYear'], ascending=False, axis=0)
+
+# plt.figure(figsize=(8, 8))
+# plt.pie(top_databases, labels=top_databases.index, autopct='%1.1f%%')
+# # plt.pie(top_lang, labels=top_lang.index, autopct='%1.1f%%')
+# plt.title('Top 5 Databases Respondents Wish to Learn Next Year')
+# plt.show()
 
 # STACKED CHARTS
 
+df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
 
+# Filter data for age group 30 to 35
+df_age_group = df[(df['Age'] >= 30) & (df['Age'] <= 35)]
+
+# Group by age and calculate median WorkWeekHrs and CodeRevHrs
+df_age_group_median = df_age_group.groupby('Age')[['WorkWeekHrs', 'CodeRevHrs']].median()
+
+# Plotting stacked bar chart
+df_age_group_median.plot(kind='bar', stacked=True, figsize=(10, 6))
+
+plt.title('Median WorkWeekHrs and CodeRevHrs for Age Group 30-35')
+plt.xlabel('Age')
+plt.ylabel('Median Hours')
+plt.xticks(rotation=0)
+plt.legend(title='Hours', loc='upper left')
+plt.show()
 
 # LINE CHART
 
