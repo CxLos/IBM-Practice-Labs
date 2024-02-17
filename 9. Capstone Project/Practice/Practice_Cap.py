@@ -397,20 +397,14 @@ import sqlite3
 
 url = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m4_survey_data.sqlite"
 
-url1 = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m4_survey_data.sqlite"
 filename = "m4_survey_data.sqlite"
-
-conn = sqlite3.connect("m4_survey_data.sqlite") # open a database connection
-cur = conn.cursor()
 
 df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DA0321EN-SkillsNetwork/LargeData/m2_survey_data.csv")
 
-chunk = 100
-df.to_sql("SURVEY_DATA", conn, if_exists='replace', index=False, method="multi", chunksize=chunk)
-
-response = requests.get(url1)
-
-
+# conn = sqlite3.connect("m4_survey_data.sqlite") # open a database connection
+# cur = conn.cursor()
+# chunk = 100
+# df.to_sql("SURVEY_DATA", conn, if_exists='replace', index=False, method="multi", chunksize=chunk)
 
 # with open(filename, 'wb') as f:
 #     f.write(response.content)
@@ -423,11 +417,99 @@ response = requests.get(url1)
 # # the read_sql_query runs the sql query and returns the data as a dataframe
 # pd.read_sql_query(QUERY,conn)
 
-df = pd.read_sql_query("""
-select * from SURVEY_DATA limit 15;
-""", conn)
+# df = pd.read_sql_query("""
+# show tables;
+# """, conn)
 
-print(df)
+# print(df)
+# conn.close()
+
+# HISTOGRAM
+
+# ccomp = df['ConvertedComp']
+# plt.hist(ccomp)
+# plt.show()
+# ccomp.plot(kind='hist', figsize=(10,6))
+
+# BOX PLOT
+# plot a boxplot for age:
+# df_age = df['Age']
+# sns.boxplot(x=df_age)
+# plt.show()
+# df_age.plot(kind='box')
+
+
+# SCATTER PLOT
+
+# Create a scatter plot for Age & WorkWeekHrs
+
+# df_scatter = df[['Age','WorkWeekHrs']]
+# print(df_scatter.head())
+# df_scatter.plot(kind='scatter', x='Age', y='WorkWeekHrs', figsize=(10, 6), color='darkblue')
+
+# plt.title('Correlation between Age and Workweek Hours')
+# plt.xlabel('Age')
+# plt.ylabel('Workweek Hours')
+# plt.show()
+
+# BUBBLE PLOT
+
+# Bubble Plot for WorkWeekHrs & CodeRevHrs using Age as bubble size
+
+df_code_rev = df['CodeRevHrs'].dropna()
+df_wwh = df['WorkWeekHrs'].dropna()
+# df_code_wwh = df[['']]
+
+df_bubble = df[['CodeRevHrs','WorkWeekHrs']].dropna()
+# print(df_bubble.head())
+
+norm_age = (df_bubble['Age'] - df_bubble['Age'].min()) / (df_bubble['Age'].max() - df_bubble['Age'].min())
+
+# norm_code_rev = (df_bubble['CodeRevHrs'] - df_bubble['CodeRevHrs'].min()) / (df_bubble['CodeRevHrs'].max() - df['CodeRevHrs'].min())
+
+# norm_wwh = (df_bubble['WorkWeekHrs'] - df_bubble['WorkWeekHrs'].min()) / (df_bubble['WorkWeekHrs'].max() - df['WorkWeekHrs'].min())
+
+# WorkWeekHrs
+ax0 = df_bubble.plot(kind='scatter',
+                    x='Age',
+                    y='CodeRevHrs',
+                    figsize=(14, 8),
+                    alpha=0.5,  # transparency
+                    color='green',
+                    s=norm_age * 2000 + 10,  # pass in weights 
+                    xlim=(1975, 2015)
+                    )
+
+# CodeRevHrs
+ax1 = df_bubble.plot(kind='scatter',
+                    x='Age',
+                    y='WorkWeekHrs',
+                    alpha=0.5,
+                    color="blue",
+                    s=norm_age * 2000 + 10,
+                    ax=ax0
+                    )
+
+ax0.set_xlabel('CodeRevHrs')
+ax0.set_ylabel('WorkWeekHrs')
+ax0.set_title('CodeRevHrs vs. WorkWeekHrs with Age Bubble Size')
+
+
+# PIE CHART
+
+
+
+# STACKED CHARTS
+
+
+
+# LINE CHART
+
+
+
+# BAR CHART
+
+
 
 # ----------------------------------------------- PRINTS ---------------------------------------------------
 
