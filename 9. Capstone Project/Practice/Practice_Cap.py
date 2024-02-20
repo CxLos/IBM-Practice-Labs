@@ -31,7 +31,7 @@ import sqlite3
 
 # df = pd.read_csv(data)
 
-# 1. -------------------------------------- DATA COLLECTION ---------------------------------------------
+# 1. -------------------------------------- DATA COLLECTION -----------------------------------------------
 
 # REQUESTS
 
@@ -533,6 +533,8 @@ top_lang
 
 # STACKED CHARTS
 
+# Create a stacked chart of median `WorkWeekHrs` and `CodeRevHrs` for the age group 30 to 35.
+
 df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
 
 # Filter data for age group 30 to 35
@@ -552,12 +554,34 @@ plt.legend(title='Hours', loc='upper left')
 plt.show()
 
 # LINE CHART
+# Plot the median ConvertedComp for all ages between 45 - 60
 
+df['Age'] = pd.to_numeric(df['Age'], errors='coerce')
 
+# Filter data for age group 30 to 35
+df_age_group = df[(df['Age'] >= 45) & (df['Age'] <= 60)]
+
+# Group by age and calculate median WorkWeekHrs and CodeRevHrs
+df_converted = df_age_group.groupby('Age')[['ConvertedComp']].median()
+
+# Plotting stacked bar chart
+df_converted.plot(kind='line', stacked=True, figsize=(10, 6))
+
+plt.title('Median WorkWeekHrs and CodeRevHrs for Age Group 30-35')
+plt.xlabel('Age')
+plt.ylabel('Median ConvertedComp')
+# plt.xticks(rotation=0)
+# plt.legend(title='Hours', loc='center')
+plt.show()
 
 # BAR CHART
+# Create a horizontal bar chart using column 'MainBranch'
 
+main_bar = df['MainBranch']
 
+main_bar.value_counts().plot(kind='barh')
+
+print(main_bar.value_counts())
 
 # ----------------------------------------------- PRINTS ---------------------------------------------------
 
