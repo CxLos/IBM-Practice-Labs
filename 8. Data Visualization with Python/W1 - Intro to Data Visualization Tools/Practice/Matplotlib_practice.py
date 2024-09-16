@@ -15,6 +15,9 @@ df_can.set_index('Country', inplace=True)
 # Optional: Remove name of index:
 # df_can.index.name = None
 
+# print(df_can.head())
+print(df_can.dtypes)
+
 # VISUALIZING DATA USING MATPLOTLIB ---------------------------------------------------------------------------------
 
 # Check Matplotlib version:
@@ -35,26 +38,27 @@ years = list(map(str, range(1980, 2014)))
 # Create a dataseries for Haiti:
 haiti = df_can.loc['Haiti', years]
 # print(haiti.head())
+# print(haiti.dtypes)
 # print(type(haiti))
 
 # Change index values(years) to int
-haiti.index = haiti.index.map(int) 
+# haiti.index = haiti.index.map(int) 
 
 # Plot
-# haiti.plot(kind='line')
+haiti.plot(kind='line')
 
 # # Add title and labels
-# plt.title('Immigration from Haiti')
-# plt.xlabel('Year')
-# plt.ylabel('Number of Immigrants')
+plt.title('Immigration from Haiti')
+plt.xlabel('Year')
+plt.ylabel('Number of Immigrants')
 
 # annotate the 2010 Earthquake. 
 # syntax: plt.text(x, y, label)
-# plt.text(2000, 6000, '2010 Earthquake')
+plt.text(2000, 6000, '2010 Earthquake')
 
 # If years were type str:
 # Year 2000 is the 20th index
-# plt.text(20, 6000, '2010 Earthquake')
+plt.text(20, 6000, '2010 Earthquake')
 
 # Display the plot
 # plt.show()
@@ -77,12 +81,14 @@ df_CI = df_CI.transpose()
 # Compare Immigration trends from top 5 countries
 df_top5 = df_can.loc[['China', 'India', 'United Kingdom of Great Britain and Northern Ireland', 'Philippines', 'Pakistan'], years]
 df_top5 = df_top5.transpose()
+# print(df_top5)
+# print(df_top5.dtypes)
 
 df_top5.plot(kind='line')
 plt.title('Immigration from Top 5 Countries')
 plt.xlabel('Year')
 plt.ylabel('Number of Immigrants')
-plt.show()
+# plt.show()
 
 # -------------------------------------------------------------------------------------------------------------------
 

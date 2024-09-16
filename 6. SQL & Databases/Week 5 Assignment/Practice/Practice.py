@@ -15,14 +15,16 @@ url3 = 'https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDe
 url4 = 'https://data.cityofchicago.org/resource/jcxq-k9xf.csv'
 
 # file = './IBM Practice Labs/ChicagoPublicSchools.csv'
-file = 'C:/Users/CxLos/OneDrive/Documents/IBM Data Analyst Professional Certificate/IBM Practice Labs/ChicagoPublicSchools.csv'
+file = r'C:/Users/CxLos/OneDrive/Documents/IBM Data Analyst Professional Certificate/IBM Practice Labs/ChicagoPublicSchools.csv'
 absolute_path = os.path.abspath(file)
-print(f"Absolute path of the file: {absolute_path}")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# print('Script Directory:', script_dir)
+# print(f"Absolute path of the file: {absolute_path}")
 
 con = sqlite3.connect("Chicago_Schools.db")
 cur = con.cursor()
 
-df = pandas.read_csv(file)
+df = pandas.read_csv(url)
 df2 = pandas.read_csv(url2)
 df3 = pandas.read_csv(url3)
 
@@ -44,7 +46,7 @@ df33 = pandas.read_sql_query("select * from CHICAGO_PUBLIC_SCHOOLS_DATA limit 7;
 # df4 = pandas.read_sql_query("select name, type, length(type) from PRAGMA_TABLE_INFO('CHICAGO_PUBLIC_SCHOOLS_DATA');", con)
 
 # 1. Count Elementary schools
-# df4 = pandas.read_sql_query("select count(*) from CHICAGO_PUBLIC_SCHOOLS_DATA where [Elementary, Middle, or High School]='ES';", con)
+df4 = pandas.read_sql_query("select count(*) from CHICAGO_PUBLIC_SCHOOLS_DATA where [Elementary, Middle, or High School]='ES';", con)
 
 # 2. Highest Safety Score
 # df4 = pandas.read_sql_query("select name_of_school, max(safety_score) from CHICAGO_PUBLIC_SCHOOLS_DATA;", con)
@@ -81,13 +83,13 @@ df33 = pandas.read_sql_query("select * from CHICAGO_PUBLIC_SCHOOLS_DATA limit 7;
 # # 12. Hardship index for the community area that has highest value for college enrollment
 # df4 = pandas.read_sql_query("select CD.community_area_name, hardship_index from CENSUS_DATA CD, CHICAGO_PUBLIC_SCHOOLS_DATA CPS where CD.community_area_number = CPS.community_area_number and college_enrollment = (select max(college_enrollment) from CHICAGO_PUBLIC_SCHOOLS_DATA);", con)
 
-df4 = pandas.read_sql_query("select community_area_name, college_enrollment from CHICAgO_PUBLIC_SCHOOLS_DATA order by college_enrollment desc limit 20;", con)
+# df4 = pandas.read_sql_query("select community_area_name, college_enrollment from CHICAGO_PUBLIC_SCHOOLS_DATA order by college_enrollment desc limit 20;", con)
 
-print(df1)
+# print(df1)
 # print(df22)
 # print(df1)
 # print(df1.columns)
-# print(df4)
+print(df4)
 
 con.close()
 

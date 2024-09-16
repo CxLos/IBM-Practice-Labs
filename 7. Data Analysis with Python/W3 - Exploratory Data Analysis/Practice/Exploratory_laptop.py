@@ -22,9 +22,9 @@ df = pd.read_csv(file_path)
 # Generate regression plots for each of the parameters below against the 'price' column. Print the value of Correlation of each feature with 'Price'.
 
 # 1-1 CPU_frequency plot
-# sns.regplot(x="CPU_frequency", y="Price", data=df)
-# plt.ylim(0,)
-# plt.show()
+sns.regplot(x="CPU_frequency", y="Price", data=df)
+plt.ylim(0,)
+plt.show()
 
 # 1-2 Screen_Size_inch plot
 # sns.regplot(x="Screen_Size_in", y="Price", data=df)
@@ -82,7 +82,7 @@ describe_obj = df.describe(include=['object'])
 # 3-1. Create the group
 group = df[['GPU','CPU_core','Price']]
 grouped = group.groupby(['GPU','CPU_core'],as_index=False)['Price'].mean()
-print(grouped)
+# print(grouped)
 
 # 3-2. Create the Pivot Table
 pivot = grouped.pivot(index='GPU', columns='CPU_core')

@@ -76,11 +76,11 @@ df_japan = df_can.loc[['Japan'], years].transpose()
 # print(df_japan.head())
 # print(df_japan.describe())
 
-# df_japan.plot(kind='box', figsize=(8, 6))
+df_japan.plot(kind='box', figsize=(8, 6))
 
-# plt.title('Box plot of Japanese Immigrants from 1980 - 2013')
-# plt.ylabel('Number of Immigrants')
-# plt.show()
+plt.title('Box plot of Japanese Immigrants from 1980 - 2013')
+plt.ylabel('Number of Immigrants')
+plt.show()
 
 # Compare Distribution of the number of new immigrants from India & China from 1980-2013
 
@@ -235,9 +235,9 @@ df_total['year'] = df_total['year'].astype(int)
 
 df_total.plot(kind='scatter', x='year', y='total', figsize=(10, 6), color='green')
 
-plt.title('Total Immigration From Norway, Denmark & Sweden to Canada from 1980 - 2013')
-plt.xlabel('Year')
-plt.ylabel('Number of Immigrants')
+# plt.title('Total Immigration From Norway, Denmark & Sweden to Canada from 1980 - 2013')
+# plt.xlabel('Year')
+# plt.ylabel('Number of Immigrants')
 # plt.show()
 
 # BUBBLE PLOTS ----------------------------------------------------------------------------------------------
@@ -288,11 +288,11 @@ ax1 = df_can_t.plot(kind='scatter',
                     ax=ax0 # This plot should be overlaid on ax0
                     )
 
-ax0.set_ylabel('Number of Immigrants')
-ax0.set_title('Immigration from Brazil and Argentina from 1980 to 2013')
-ax0.legend(['Brazil', 'Argentina'], loc='upper left', fontsize='x-large')
+# ax0.set_ylabel('Number of Immigrants')
+# ax0.set_title('Immigration from Brazil and Argentina from 1980 to 2013')
+# ax0.legend(['Brazil', 'Argentina'], loc='upper left', fontsize='x-large')
 
-plt.show()
+# plt.show()
 
 # Immigration from China & India to Canada from 1980-2013
  

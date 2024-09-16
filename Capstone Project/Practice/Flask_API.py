@@ -5,6 +5,7 @@ import requests
 import flask
 from flask import request, jsonify
 from openpyxl import Workbook 
+import matplotlib.pyplot as plt
 
 # ------------------------------------------------ FLASK API -----------------------------------------------
 
@@ -190,6 +191,60 @@ python_jobs_la = get_data('Location', 'Los Angeles', python_jobs_la)
 
 # Convert the filtered data to a DataFrame
 df = pd.DataFrame(python_jobs_la)
+
+# ---------------------------------------------- PLOT ---------------------------------------------------
+
+# Function to get the number of jobs for a specific technology
+# def get_number_of_jobs_T(technology):
+#     count = sum(1 for job in data if technology in job['Key Skills'])
+#     return count
+
+# # Create a dictionary to store the counts for each programming language
+# programming_languages = {'Python': get_number_of_jobs_T('Python'),
+#                          'Java': get_number_of_jobs_T('Java'),
+#                          'SQL': get_number_of_jobs_T('SQL'),
+#                          'JavaScript': get_number_of_jobs_T('JavaScript'),
+#                          'C++': get_number_of_jobs_T('C++')}
+
+# # Convert the dictionary to a DataFrame and sort by job openings in descending order
+# df_jobs = pd.DataFrame.from_dict(programming_languages, orient='index', columns=['Job Openings'])
+# df_jobs = df_jobs.sort_values(by='Job Openings', ascending=False)
+
+# # Create a bar chart
+# plt.figure(figsize=(10, 6))
+# plt.barh(df_jobs.index, df_jobs['Job Openings'], color='skyblue')
+# plt.xlabel('Job Openings')
+# plt.ylabel('Programming Language')
+# plt.title('Job Openings by Programming Language')
+# plt.gca().invert_yaxis()  # Invert y-axis to display programming languages from top to bottom
+# plt.show()
+
+# Function to extract salary information
+def extract_salary(job):
+    if 'Salary' in job:
+        return job['Salary']
+    else:
+        return None
+
+# Apply the function to each job and create a list of salaries
+salaries = j_data.apply(lambda x: extract_salary(x), axis=1).dropna()
+
+# Convert salaries to numeric and remove any entries that couldn't be converted
+salaries = pd.to_numeric(salaries, errors='coerce').dropna()
+
+# Sort salaries in descending order
+salaries_sorted = salaries.sort_values(ascending=False)
+
+# Plot the bar chart
+plt.figure(figsize=(10, 6))
+plt.barh(salaries_sorted.index[:10], salaries_sorted.values[:10], color='skyblue')
+plt.xlabel('Salary')
+plt.ylabel('Job')
+plt.title('Top 10 Job Salaries (Descending Order)')
+plt.gca().invert_yaxis()  # Invert y-axis to display jobs from top to bottom
+plt.show()
+
+# -------------------------------------------- SAVE TO EXCEL ---------------------------------------------
 
 # Specify the file path for the Excel file
 excel_file_path = 'python_jobs_la.xlsx'
