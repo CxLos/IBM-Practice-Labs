@@ -7,18 +7,10 @@
 }
 
 .title {
-  margin: 5px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
   text-align: center;
   color: cadetblue;
   font-size: 45px;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-}
-
-.pkmntotal {
-  margin: 5px 0px 0px 0px;
-  text-align: center;
-  color: rgb(255, 41, 41);
-  font-size: 60px;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
@@ -33,7 +25,7 @@
 .btn {
   display: inline-block;
   text-align: center;
-  margin: 15px auto;
+  margin: 10px auto;
   color:black;
   background-color: lightgray;
   border: 2px solid black;
@@ -53,7 +45,7 @@
 }
 
 .row1 {
-  margin:20px 0px 0px 10px;
+  margin:10px 0px 0px 10px;
   display:flex;
   flex-direction: row;
   justify-content: center;
@@ -68,7 +60,7 @@
 }
 
 .row3 {
-  margin:0px 20px 0px 20px;
+  margin:0px 0px 0px 10px;
   display:flex;
   flex-direction: row;
   justify-content: center;
@@ -80,16 +72,17 @@
   border-right: 2px solid rgb(186, 186, 186);
   border-bottom: 2px solid rgb(186, 186, 186);
   margin: 0px;
-  padding: 10px 20px 0px 0px;
-  width: 48%;
+  padding: 10px 10px -10px 0px;
+  width: 49%;
+  /* height:500px; */
 }
 
 .graph2 {
   /* border-left: 2px solid gray; */
   border-bottom: 2px solid rgb(186, 186, 186);
   margin: 0px;
-  padding: 10px 0px 0px 30px;
-  width: 48%;
+  padding: 10px 0px 0px 10px;
+  width: 49%;
 }
 
 .graph3 {
@@ -132,27 +125,7 @@
   width: 48%;
 }
 
-.folium {
-  border: 2px solid;
-  border-color: rgb(186, 186, 186);
-  width: 90%;
-  height: 800px;
-  margin: 0px 0px 50px 0px;
-  padding: 0px 0px 0px 0px;
-}
-
-.zip {
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-size: 20px;
-}
-
-.type-input {
-  /* display: flex;
-  align-self: center;
-  align-content:center;
-  align-items: center; */
-  width:20vw;
-  /* height: auto; */
-  font-size: 20px;
-  font-family: 'Calibri';
+.graph11 {
+  height: 5vh;
+  margin: 500px;
 }
