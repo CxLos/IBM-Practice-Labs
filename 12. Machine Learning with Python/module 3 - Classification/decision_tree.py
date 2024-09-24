@@ -13,6 +13,7 @@ from sklearn.metrics import roc_auc_score
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
+from snapml import DecisionTreeClassifier
 import pandas as pd
 import pylab as pl
 import numpy as np
