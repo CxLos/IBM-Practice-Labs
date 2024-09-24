@@ -413,11 +413,11 @@ if __name__ == '__main__':
                    True)
                 #    False)
 
-# -------------------------------------- Export Database -------------------------------------- #
+# ----------------------- Export Database ------------------------------- #
 
 # updated_path = 'data/fuel_consumption_C02.csv'
 # data_path = os.path.join(script_dir, updated_path)
 # df.to_csv(data_path, index=False)
 # print(f"DataFrame saved to {data_path}")
 
-# ---------------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
