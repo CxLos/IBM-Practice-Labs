@@ -13,7 +13,7 @@ from sklearn.metrics import roc_auc_score
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
-from snapml import DecisionTreeClassifier
+# from snapml import DecisionTreeClassifier
 import pandas as pd
 import pylab as pl
 import numpy as np
@@ -25,7 +25,7 @@ from dash.development.base_component import Component
 
 # ========================== Load Data ==========================
 
-raw_data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%203/data/creditcard.csv')
+# raw_data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%203/data/creditcard.csv')
 
 # current_dir = os.getcwd()
 # script_dir = os.path.dirname(os.path.abspath(__file__))
