@@ -111,10 +111,10 @@ w_train = compute_sample_weight('balanced', y_train)
 
 # for reproducible output across multiple function calls, set random_state to a given integer value
 sklearn_dt = DecisionTreeClassifier(max_depth=4, random_state=35)
+sklearn_dt.fit(X_train, y_train, sample_weight=w_train)
 
 # train a Decision Tree Classifier using scikit-learn
 t0 = time.time()
-sklearn_dt.fit(X_train, y_train, sample_weight=w_train)
 sklearn_time = time.time()-t0
 print("[Scikit-Learn] Training time (s):  {0:.5f}".format(sklearn_time))
 
