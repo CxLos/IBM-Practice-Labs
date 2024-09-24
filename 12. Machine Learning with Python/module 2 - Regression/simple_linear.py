@@ -226,7 +226,7 @@ app.layout = html.Div(children=[
 
         html.A(
         'Repo',
-        href='https://github.com/CxLos/IBM-Practice-Labs/blob/main/12.%20Machine%20Learning%20with%20Python/module%202%20-%20Regression/linear.py',
+        href='https://github.com/CxLos/IBM-Practice-Labs/blob/main/12.%20Machine%20Learning%20with%20Python/module%202%20-%20Regression/simple_linear.py',
         className='btn')
     ]),
 
