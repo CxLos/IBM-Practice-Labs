@@ -25,13 +25,13 @@ from dash.development.base_component import Component
 
 # ========================== Load Data ==========================
 
-# df = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%203/data/creditcard.csv')
+raw_data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%203/data/creditcard.csv')
 
-current_dir = os.getcwd()
-script_dir = os.path.dirname(os.path.abspath(__file__))
-data_path = 'data/credit_card.csv'
-file_path = os.path.join(script_dir, data_path)
-raw_data = pd.read_csv(file_path)
+# current_dir = os.getcwd()
+# script_dir = os.path.dirname(os.path.abspath(__file__))
+# data_path = 'data/credit_card.csv'
+# file_path = os.path.join(script_dir, data_path)
+# raw_data = pd.read_csv(file_path)
 
 # print(current_dir)
 # print(script_dir)
