@@ -5,6 +5,7 @@ from __future__ import print_function
 from sklearn import metrics
 from sklearn import linear_model
 from sklearn import preprocessing
+from sklearn.svm import LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import normalize, StandardScaler
@@ -117,7 +118,43 @@ sklearn_dt.fit(X_train, y_train, sample_weight=w_train)
 # train a Decision Tree Classifier using scikit-learn
 t0 = time.time()
 sklearn_time = time.time()-t0
-print("[Scikit-Learn] Training time (s):  {0:.5f}".format(sklearn_time))
+# print("[Scikit-Learn] Training time (s):  {0:.5f}".format(sklearn_time))
+
+# run inference and compute the probabilities of the test samples 
+# to belong to the class of fraudulent transactions
+sklearn_pred = sklearn_dt.predict_proba(X_test)[:,1]
+
+# evaluate the Compute Area Under the Receiver Operating Characteristic 
+# Curve (ROC-AUC) score from the predictions
+sklearn_roc_auc = roc_auc_score(y_test, sklearn_pred)
+# print('[Scikit-Learn] ROC-AUC score : {0:.3f}'.format(sklearn_roc_auc))
+
+# ========================== SVM ========================== #
+
+# instatiate a scikit-learn SVM model
+# to indicate the class imbalance at fit time, set class_weight='balanced'
+# for reproducible output across multiple function calls, set random_state to a given integer value
+sklearn_svm = LinearSVC(
+  class_weight='balanced', # penalize mistakes on the minority class
+  random_state=31, # for reproducible output across multiple function calls
+  loss="hinge", # this is the SVM loss which is used to maximize the margin
+  fit_intercept=False) # the data is already centered
+
+# train a linear Support Vector Machine model using Scikit-Learn
+t0 = time.time()
+sklearn_svm.fit(X_train, y_train)
+sklearn_time = time.time() - t0
+# print("[Scikit-Learn] Training time (s):  {0:.2f}".format(sklearn_time))
+
+# Evaluate the model
+
+# run inference using the Scikit-Learn model
+# get the confidence scores for the test samples
+sklearn_pred = sklearn_svm.decision_function(X_test)
+
+# evaluate accuracy on test set
+acc_sklearn  = roc_auc_score(y_test, sklearn_pred)
+print("[Scikit-Learn] ROC-AUC score:   {0:.3f}".format(acc_sklearn))
 
 # ========================== Data Visualization ========================== #
 
@@ -212,9 +249,9 @@ html.Div(
 ),
 ])
 
-if __name__ == '__main__':
-    app.run_server(debug=
-                   True)
+# if __name__ == '__main__':
+#     app.run_server(debug=
+#                    True)
                 #    False)
 
 # ================================ Export Data =============================== #
