@@ -1,14 +1,41 @@
 # IBM-Data-Analyst-Certificate
 
-## Description
+## Project Description
 
+This project is part of the IBM Data Analyst + Science Professional Certificate program. The primary objective of this project is to apply various data science and machine learning techniques to analyze and visualize data. The project involves the following key components:
+
+1. **Data Collection and Cleaning**:
+   - Collecting raw data from various sources.
+   - Cleaning and preprocessing the data to ensure it is suitable for analysis.
+
+2. **Exploratory Data Analysis (EDA)**:
+   - Performing exploratory data analysis to understand the underlying patterns and relationships in the data.
+   - Visualizing the data using various plotting techniques to gain insights.
+
+3. **Feature Engineering**:
+   - Creating new features from the existing data to improve the performance of machine learning models.
+   - Selecting the most relevant features for model training.
+
+4. **Model Building and Evaluation**:
+   - Building and training machine learning models to predict outcomes based on the data.
+   - Evaluating the performance of the models using appropriate metrics and techniques.
+
+5. **Dashboard Development**:
+   - Developing interactive dashboards to visualize the results and findings of the analysis.
+   - Deploying the dashboards on platforms like Heroku and Render for easy access.
+
+6. **Reporting and Documentation**:
+   - Documenting the methodology, findings, and insights gained from the analysis.
+   - Preparing reports and presentations to communicate the results effectively.
+
+This project aims to provide hands-on experience with real-world data science tasks and enhance the understanding of key concepts in data science and machine learning.
 
 ## Table of Contents 
 	
 - [Installation](#installation)
 - [Usage](#usage)
 - [Methodology](#methodology)
-- [Results](#results)
+- [Findings](#findings)
 - [Conclusion](#conclusion)
 - [License](#license)
 
@@ -31,21 +58,7 @@ To run this project locally, follow these steps:
 
 ## Usage
 
-- This is an interactive Plotly/Dash dashboard. Please feel free to hover over any interesting data points that you would like to take a deeper dive on and zoom or zoom out to get a better view.
-
-- To launch the dashboard, execute the following command in your terminal or click the following link:
-
-  - [Service Tracker Report: Q4 2024 Dashboard - OnRender](https://bmhc-responses-q4-2024.onrender.com/)
-  - [Service Tracker Report: Q4 2024 Dashboard - Heroku](https://bmhc-responses-q4-2024-f697948dcc39.herokuapp.com/)
-
-```bash
-python responses_q4_2024.py
-```
-
-<!-- ![Preview](./screenshots/Screenshot-163423.png) -->
-
 ## Methodology
-
 
 
 ## Plans for collected data:
