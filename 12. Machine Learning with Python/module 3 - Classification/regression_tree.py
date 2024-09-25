@@ -4,6 +4,7 @@
 import pandas as pd
 import pylab as pl
 import numpy as np
+import plotly.graph_objects as go
 import scipy.optimize as opt
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
@@ -33,14 +34,14 @@ churn_df = pd.read_csv(file_path, delimiter=",")
 # ========================== Data Exploration ========================== #
 
 # Preview Data
-print(my_data.head())
+# print(churn_df.head())
 
 # Summarize the data
-# print("DF Shape:", my_data.shape)
-# print("DTypes: \n", my_data.dtypes)
-# print("Description: \n", my_data.describe())
-# print("Info:", my_data.info())
-# print("Columns:", my_data.columns)
+# print("DF Shape:", churn_df.shape)
+# print("DTypes: \n", churn_df.dtypes)
+# print("Description: \n", churn_df.describe())
+# print("Info:", churn_df.info())
+# print("Columns:", churn_df.columns)
 
 # ========================== Pre Processing ========================== #
 
@@ -48,25 +49,48 @@ churn_df = churn_df[['tenure', 'age', 'address', 'income', 'ed', 'employ', 'equi
 churn_df['churn'] = churn_df['churn'].astype('int')
 churn_df.head()
 
+X = np.asarray(churn_df[['tenure', 'age', 'address', 'income', 'ed', 'employ', 'equip']])
+print(X[0:5])
+
+y = np.asarray(churn_df['churn'])
+print(y [0:5])
+
+X = preprocessing.StandardScaler().fit(X).transform(X)
+X[0:5]
+
 # ========================== Train / Test Split ========================== #
 
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=4)
 
+# print ('Train set:', X_train.shape,  y_train.shape)
+# print ('Test set:', X_test.shape,  y_test.shape)
 
-# ========================== Decision Tree ========================== #
+LR = LogisticRegression(C=0.01, solver='liblinear').fit(X_train,y_train)
+# print(LR)
 
+# Prediction
+yhat = LR.predict(X_test)
+# print(yhat)
 
+# Predict Proba
+yhat_prob = LR.predict_proba(X_test)
+# print(yhat_prob)
 
-# ========================== Visualization ========================== #
-
-
+# Jaccard Index
+j_score = jaccard_score(y_test, yhat,pos_label=0)
+# print("Jaccard Index: ", j_score)
 
 # ========================== Confusion Matrix ========================== #
 
 # Generate the confusion matrix
 cnf_matrix = confusion_matrix(y_test, yhat, labels=[1, 0])
-np.set_printoptions(precision=2)
+np.set_printoptions(precision=2) # Set the precision of the output
 
-def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix', cmap=plt.cm.Blues):
+def plot_confusion_matrix(cm, # Confusion matrix
+                          classes, # Classes
+                          normalize=False, # Normalize
+                          title='Confusion matrix', 
+                          cmap=plt.cm.Blues): # Colormap
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
@@ -77,23 +101,25 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='Confusion matrix'
     else:
         print('Confusion matrix, without normalization')
 
-    print(cm)
+    # print(cm)
 
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.imshow(cm, # Image data
+               interpolation='nearest', # Interpolation is the process of generating intermediate values
+               cmap=cmap) # Colormap
     plt.title(title)
-    plt.colorbar()
+    plt.colorbar() # Change the color scale
     tick_marks = np.arange(len(classes))
     plt.xticks(tick_marks, classes, rotation=45)
     plt.yticks(tick_marks, classes)
 
     fmt = '.2f' if normalize else 'd'
-    thresh = cm.max() / 2.
+    thresh = cm.max() / 2. # Threshold for the text color
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         plt.text(j, i, format(cm[i, j], fmt),
                  horizontalalignment="center",
                  color="white" if cm[i, j] > thresh else "black")
 
-    plt.tight_layout()
+    plt.tight_layout() # Automatically adjust subplot parameters to give specified padding
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
 
@@ -106,6 +132,24 @@ buffer = BytesIO()
 plt.savefig(buffer, format='png')
 buffer.seek(0)
 img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
+
+# ========================== Visualization ========================== #
+
+# Create the heatmap
+heatmap = go.Figure(data=go.Heatmap(
+    z=cnf_matrix,
+    x=['Predicted 1', 'Predicted 0'],
+    y=['Actual 1', 'Actual 0'],
+    colorscale='Blues'
+))
+
+# Update layout for better readability
+heatmap.update_layout(
+    title='Confusion Matrix',
+    title_x=0.5,
+    xaxis_title='Predicted Label',
+    yaxis_title='True Label'
+)
 
 # =============================== Dash App =============================== #
 
@@ -132,14 +176,15 @@ html.Div(
         html.Div(
            className='graph1',
             children=[
-                dcc.Graph(
-                  
-
+                # Plot the Confusion Matrix
+                dcc.Graph( 
+                    id='graph1',
+                    figure=heatmap
                 )
             ]
         ),
         html.Div(
-            className='graph1',
+            className='matrix',
             children=[
                 html.H1("Confusion Matrix"),
                 html.Img(src=f'data:image/png;base64,{img_base64}')
@@ -149,9 +194,9 @@ html.Div(
 ),
 ])
 
-# if __name__ == '__main__':
-#     app.run_server(debug=
-#                    True)
+if __name__ == '__main__':
+    app.run_server(debug=
+                   True)
                 #    False)
 
 # ================================ Export Data =============================== #
