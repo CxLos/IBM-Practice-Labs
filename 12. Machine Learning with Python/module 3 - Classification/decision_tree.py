@@ -1,38 +1,33 @@
 
 # =============================== Imports ============================= #
 
-from __future__ import print_function
 from sklearn import metrics
-from sklearn import linear_model
 from sklearn import preprocessing
-from sklearn.svm import LinearSVC
+from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
+# from sklearn.tree import export_graphviz
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import normalize, StandardScaler
-from sklearn.utils.class_weight import compute_sample_weight
-from sklearn.metrics import roc_auc_score
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go
-import plotly.express as px
-# from snapml import DecisionTreeClassifier
+from IPython.display import Image
+import pydot
+from PIL import Image
 import pandas as pd
-import pylab as pl
-import numpy as np
-import time
 import os
+import base64
+from io import BytesIO
 import dash
 from dash import dcc, html
 from dash.development.base_component import Component
 
 # ========================== Load Data ==========================
 
-raw_data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%203/data/creditcard.csv')
+# my_data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%203/data/drug200.csv', delimiter=",")
 
-# current_dir = os.getcwd()
-# script_dir = os.path.dirname(os.path.abspath(__file__))
-# data_path = 'data/credit_card.csv'
-# file_path = os.path.join(script_dir, data_path)
-# raw_data = pd.read_csv(file_path)
+current_dir = os.getcwd()
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_path = 'data/drug200.csv'
+file_path = os.path.join(script_dir, data_path)
+my_data = pd.read_csv(file_path, delimiter=",") #delimiter is the separator in the csv file
 
 # print(current_dir)
 # print(script_dir)
@@ -40,149 +35,126 @@ raw_data = pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdo
 # ========================== Data Exploration ========================== #
 
 # Preview Data
-# print(raw_data.head())
+# print(my_data.head())
 
 # Summarize the data
-# print(df.describe())
-# print(df.info())
-# print(df.columns)
-# print(df.shape)
-# print(df.dtypes)
+# print("DF Shape:", my_data.shape)
+# print("DTypes: \n", my_data.dtypes)
+# print("Description: \n", my_data.describe())
+# print("Info:", my_data.info())
+# print("Columns:", my_data.columns)
 
-# print("There are " + str(len(df)) + " observations in the credit card fraud dataset.")
-# print("There are " + str(len(df.columns)) + " variables in the dataset.")
+# ========================== Pre Processing ========================== #
 
-# In real life, there will be much larger datasets, so lets inflate the dataset to 10 times its original size
-n_replicas = 10
+# X values are the features we are using to predict the target value
+X = my_data[['Age', 'Sex', 'BP', 'Cholesterol', 'Na_to_K']].values
+# print(X[0:5])
 
-# inflate the original dataset
-# big_raw_data = pd.DataFrame(np.repeat(raw_data.values, n_replicas, axis=0), columns=raw_data.columns)
+# Below we are converting the categorical data into numerical data
+# Sex 
+le_sex = preprocessing.LabelEncoder() # LabelEncoder encodes labels with a value between 0 and n_classes-1
+le_sex.fit(['F','M'])
+X[:,1] = le_sex.transform(X[:,1]) # Transform the data into numerical data
+# print(le_sex)
 
-# print("There are " + str(len(big_raw_data)) + " observations in the inflated credit card fraud dataset.")
-# print("There are " + str(len(big_raw_data.columns)) + " variables in the dataset.")
+# BP
+le_BP = preprocessing.LabelEncoder()
+le_BP.fit([ 'LOW', 'NORMAL', 'HIGH'])
+X[:,2] = le_BP.transform(X[:,2])
 
-# display first rows in the new dataset
-# print(big_raw_data.head())
+# Cholesterol
+le_Chol = preprocessing.LabelEncoder()
+le_Chol.fit([ 'NORMAL', 'HIGH'])
+X[:,3] = le_Chol.transform(X[:,3]) 
 
-# get the set of distinct classes
-labels = raw_data.Class.unique()
-# labels = big_raw_data.Class.unique()
-# print(labels)
+# print("Feature Variables: \n", X[0:5])
 
-# get the count of each class
-sizes = raw_data.Class.value_counts().values
-# sizes = big_raw_data.Class.value_counts().values
-# print(sizes)
+# Target variable
+y = my_data["Drug"]
+# print("Target variables: \n", y[0:5])
 
-# print("Minimum amount value is ", np.min(raw_data.Amount.values))
-# print("Maximum amount value is ", np.max(raw_data.Amount.values))
-# print("90% of the transactions have an amount less or equal than ", np.percentile(raw_data.Amount.values, 90))
+# ========================== Train / Test Split ========================== #
 
-# ========================== Train/ Test Split ========================== #
+X_trainset, X_testset, y_trainset, y_testset = train_test_split(
+  X, y, test_size=0.3, random_state=3)
 
-# data preprocessing such as scaling/normalization is typically useful for 
-# linear models to accelerate the training convergence
+# New shape of the training set
+# print("X_trainset shape: ", X_trainset.shape)
+# print("y_trainset shape: ", y_trainset.shape)
 
-# standardize features by removing the mean and scaling to unit variance
-# standardization basically helps to normalizes the data within a particular range
-# .fittransform computes the mean and std dev for future use
-raw_data.iloc[:, 1:30] = StandardScaler().fit_transform(raw_data.iloc[:, 1:30])
-data_matrix = raw_data.values
-
-# X: feature matrix (for this analysis, we exclude the Time variable from the dataset)
-X = data_matrix[:, 1:30]
-
-# y: labels vector
-y = data_matrix[:, 30]
-
-# data normalization
-X = normalize(X, norm="l1")
-
-# print the shape of the features matrix and the labels vector
-# print('X.shape=', X.shape, 'y.shape=', y.shape)
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)       
-# print('X_train.shape=', X_train.shape, 'Y_train.shape=', y_train.shape)
-# print('X_test.shape=', X_test.shape, 'Y_test.shape=', y_test.shape)
+# New shape of the testing set
+# print("X_testset shape: ", X_testset.shape)
+# print("y_testset shape: ", y_testset.shape)
 
 # ========================== Decision Tree ========================== #
 
-# compute the sample weights to be used as input to the train routine so that 
-# it takes into account the class imbalance present in this dataset
-w_train = compute_sample_weight('balanced', y_train)
+drugTree = DecisionTreeClassifier(
+  criterion="entropy", # measures the quality of a split
+  max_depth = 4) # maximum depth of the tree
+# print(drugTree) # it shows the default parameters
 
-# for reproducible output across multiple function calls, set random_state to a given integer value
-sklearn_dt = DecisionTreeClassifier(max_depth=4, random_state=35)
-sklearn_dt.fit(X_train, y_train, sample_weight=w_train)
+drugTree.fit(X_trainset,y_trainset)
 
-# train a Decision Tree Classifier using scikit-learn
-t0 = time.time()
-sklearn_time = time.time()-t0
-# print("[Scikit-Learn] Training time (s):  {0:.5f}".format(sklearn_time))
+# Prediction
+predTree = drugTree.predict(X_testset)
 
-# run inference and compute the probabilities of the test samples 
-# to belong to the class of fraudulent transactions
-sklearn_pred = sklearn_dt.predict_proba(X_test)[:,1]
+# print ("Predictions: \n", predTree [0:5])
+# print ("Actual values: \n", y_testset [0:5])
 
-# evaluate the Compute Area Under the Receiver Operating Characteristic 
-# Curve (ROC-AUC) score from the predictions
-sklearn_roc_auc = roc_auc_score(y_test, sklearn_pred)
-# print('[Scikit-Learn] ROC-AUC score : {0:.3f}'.format(sklearn_roc_auc))
+# Evaluation
+dtree_acc = metrics.accuracy_score(y_testset, predTree)
+# print("DecisionTrees's Accuracy: ", dtree_acc)
 
-# ========================== SVM ========================== #
+# ========================== Visualization ========================== #
 
-# instatiate a scikit-learn SVM model
-# to indicate the class imbalance at fit time, set class_weight='balanced'
-# for reproducible output across multiple function calls, set random_state to a given integer value
-sklearn_svm = LinearSVC(
-  class_weight='balanced', # penalize mistakes on the minority class
-  random_state=31, # for reproducible output across multiple function calls
-  loss="hinge", # this is the SVM loss which is used to maximize the margin
-  fit_intercept=False) # the data is already centered
+#  Create Decision Tree classifer object
+# To avoid a very large tree, we can set the max_depth to control the size of tree
+dt = DecisionTreeClassifier(max_depth=4)
 
-# train a linear Support Vector Machine model using Scikit-Learn
-t0 = time.time()
-sklearn_svm.fit(X_train, y_train)
-sklearn_time = time.time() - t0
-# print("[Scikit-Learn] Training time (s):  {0:.2f}".format(sklearn_time))
+# Train Decision Tree Classifer with input and output
+# dt = dt.fit(x_data,y_data)
+dt.fit(X_trainset,y_trainset)
 
-# Evaluate the model
+# Visualize Tree
+fig, ax = plt.subplots(figsize=(20, 10))  # Set the width and height of the plot
 
-# run inference using the Scikit-Learn model
-# get the confidence scores for the test samples
-sklearn_pred = sklearn_svm.decision_function(X_test)
+# Set font size, feature name and max depth of the tree
+features = my_data.columns.tolist()
+tree.plot_tree(
+  dt, # the data to be plotted
+  ax=ax, # the axes to plot the data
+  fontsize=10, 
+  feature_names=features, 
+  max_depth=4)
 
-# evaluate accuracy on test set
-acc_sklearn  = roc_auc_score(y_test, sklearn_pred)
-print("[Scikit-Learn] ROC-AUC score:   {0:.3f}".format(acc_sklearn))
+# Convert the Matplotlib figure to a base64-encoded string
+buffer = BytesIO()
+fig.savefig(buffer, format='png')
+buffer.seek(0)
+img_base64 = base64.b64encode(buffer.read()).decode('utf-8')
 
-# ========================== Data Visualization ========================== #
+# Save the plot to a file
+fig_path = 'images/tree.png'
+img_path = os.path.join(script_dir, fig_path)
+fig.savefig(img_path)
 
-# Class Pie Chart
-fig = go.Figure(
-    data=[go.Pie(
-        labels=labels, 
-        values=sizes, 
-        textinfo='label+percent', 
-        insidetextorientation='radial')
-        ])
+# The function will return the accuracy. If it shows 0.9, it means 90% of the data can be accurately/correctly predicted on testing dataset.
+# print('Prediction Accuracy of DT:', dt.score(X_testset, y_testset))
 
-fig.update_layout(
-    title_text='Target Variable Value Counts',
-    title_x=0.5,)
+# export_graphviz(drugTree, out_file='tree.dot', filled=True, feature_names=['Age', 'Sex', 'BP', 'Cholesterol', 'Na_to_K'])
 
-# Histogram for cc transaction amounts
-hist_transaction = (
-    px.histogram(raw_data, x='Amount', nbins=30)
-    .update_layout(
-        title='Histogram for Transaction Amounts',
-        title_x=0.5,
-        bargap=0,  # Adjust this value to control the space between bars
-        xaxis=dict(showgrid=True, layer='above traces'),
-        yaxis=dict(showgrid=True, layer='above traces')
-    )
-    .update_traces(marker=dict(line=dict(color='black', width=2)))  # Outline color and width
-)
+# Convert the DOT file to a PNG image
+# tree_path = 'images/tree.png'
+# (graph,) = pydot.graph_from_dot_file('tree.dot')
+# img_path = os.path.join(script_dir, tree_path)
+# # graph.write_png('tree.png')
+# graph.write_png(img_path)
+
+# # Convert the DOT file to a PNG image using the dot command
+# os.system('dot -Tpng tree.dot -o tree.png')
+
+# # Display the image in the notebook
+# print(Image(filename='tree.png'))
 
 # =============================== Dash App =============================== #
 
@@ -193,7 +165,7 @@ app.layout = html.Div(children=[
 
     html.Div(className='divv', children=[ 
         
-        html.H1('Decision Tree / SVM', 
+        html.H1('Decision Tree', 
         className='title'),
 
         html.A(
@@ -209,56 +181,23 @@ html.Div(
         html.Div(
             className='graph1',
             children=[
-                dcc.Graph(
-                    figure=fig
-                )
-            ]
-        ),
-        html.Div(
-            className='graph2',
-            children=[
-                dcc.Graph(
-                    figure=hist_transaction
-                )
-            ]
-        )
-    ]
-),
-
-# ROW 2
-html.Div(
-    className='row2',
-    children=[
-        html.Div(
-            className='graph1',
-            children=[
-                dcc.Graph(
-
-                )
-            ]
-        ),
-        html.Div(
-            className='graph2',
-            children=[
-                dcc.Graph(
-
-                )
+                   html.Img(src=f'data:image/png;base64,{img_base64}')
             ]
         )
     ]
 ),
 ])
 
-# if __name__ == '__main__':
-#     app.run_server(debug=
-#                    True)
+if __name__ == '__main__':
+    app.run_server(debug=
+                   True)
                 #    False)
 
 # ================================ Export Data =============================== #
 
-# updated_path = 'data/credit_card.csv'
+# updated_path = 'data/drug200.csv'
 # data_path = os.path.join(script_dir, updated_path)
-# df.to_csv(data_path, index=False)
+# my_data.to_csv(data_path, index=False)
 # print(f"DataFrame saved to {data_path}")
 
 # ============================== Update Dash ================================ #
