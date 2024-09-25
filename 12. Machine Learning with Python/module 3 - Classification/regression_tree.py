@@ -29,7 +29,7 @@ current_dir = os.getcwd()
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_path = 'data/churn_data.csv'
 file_path = os.path.join(script_dir, data_path)
-churn_df = pd.read_csv(file_path, delimiter=",")
+churn_df = pd.read_csv(file_path)
 
 # ========================== Data Exploration ========================== #
 
