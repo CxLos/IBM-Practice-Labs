@@ -309,3 +309,9 @@ if __name__ == '__main__':
 # pip install dash-renderer --upgrade
 
 # ========================================================================== #
+
+# git rm --cached "12. Machine Learning with Python/module 3 - Classification/data/yellow_tripdata.csv"
+# git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch "12. Machine Learning with Python/module 3 - Classification/data/yellow_tripdata.csv"' --prune-empty --tag-name-filter cat -- --all
+
+# git push origin --force --all
+# git push origin --force --tags
