@@ -50,7 +50,8 @@ df = pd.read_csv(file_path)
 
 # ========================== Data Pre Processing ========================== #
 
-
+# One-Hot Encoding
+df_sydney_processed = pd.get_dummies(data=df, columns=['RainToday', 'WindGustDir', 'WindDir9am', 'WindDir3pm'])
 
 # ========================== K - Means ========================== #
 
@@ -114,7 +115,7 @@ app.layout = html.Div(children=[
 
         html.A(
         'Repo',
-        href='https://github.com/CxLos/IBM-Practice-Labs/blob/main/12.%20Machine%20Learning%20with%20Python/module%206%20-%20Clustering/australia_rain_data.py',
+        href='https://github.com/CxLos/IBM-Practice-Labs/blob/main/12.%20Machine%20Learning%20with%20Python/module%206%20-%20Rain%20Prediciton%20in%20Australia/australia_rain_data.py',
         className='btn')
     ]),
 
