@@ -111,6 +111,15 @@
   white-space: nowrap; /* Prevent line breaks */
 }
 
+.data1 .js-plotly-plot {
+  margin: 0px 0px 0px 0px; /* Adjust the margin as needed */
+  padding: 15px 0px 0px 0px; /* Adjust the padding as needed */
+  /* width: 100%; */
+  height: 300px;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent line breaks */
+}
+
 /* Additional styles to ensure no extra space */
 .data .plotly {
   margin: 0;
