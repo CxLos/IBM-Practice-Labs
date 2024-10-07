@@ -1,4 +1,4 @@
-# Laptop Pricing Prompts
+# Gen AI for Data Prep
 
 ### 1. Write a Python code that can perform the following tasks:
 

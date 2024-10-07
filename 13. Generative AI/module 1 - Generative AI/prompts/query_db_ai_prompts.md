@@ -1,4 +1,4 @@
-# Heart Disease Dataset
+# Gen AI for Querying Databases
 
 ### 1. Paste the following text in the prompt instructions to give the model the appropriate context for the data.
 
