@@ -38,9 +38,7 @@ df = pd.read_csv(file_path)
 
 # Create a dictionary to store credential information
 credentials = {
-    # "url"    : "https://us-south.ml.cloud.ibm.com"
-    "url"    : "https://api.au-syd.assistant.watson.cloud.ibm.com/instances/22a6647d-8b8e-40d7-886f-a2602cc332de"
-    ,"apikey": "8UTbOq2-uDj0LfJWsPQ9dFiznxYyPG-pixhwy6lawX9r" 
+    "url"    : "https://us-south.ml.cloud.ibm.com"
 }
 
 # Indicate the model we would like to initialize. In this case, Llama 3 70B.
@@ -119,7 +117,7 @@ print(response)
 
 # ========================= OpenAI ======================== #
 
-# openai.api_key = "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"
+
 
 # response = openai.Completion.create(
 #     model="gpt-3.5-turbo",
