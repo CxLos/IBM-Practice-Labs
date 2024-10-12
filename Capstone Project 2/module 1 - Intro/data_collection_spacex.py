@@ -1,20 +1,17 @@
 
 # =============================== Imports ============================= #
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from mpl_toolkits.mplot3d import Axes3D 
+
 import plotly.graph_objects as go
 import plotly.colors as pc
 import plotly.express as px
 import datetime
-import itertools
 import requests
 import pandas as pd
 import pylab as pl
 import numpy as np
+import unicodedata
+from bs4 import BeautifulSoup
 import sys
 import re
 import os
@@ -72,6 +69,7 @@ def getCoreData(data):
             LandingPad.append(core['landpad'])
 
 spacex_url="https://api.spacexdata.com/v4/launches/past"
+
 response = requests.get(spacex_url)
 # print(response.content)
 
@@ -179,13 +177,14 @@ df_falcon9 = df[df['BoosterVersion'] == 'Falcon 9']
 # Reser 'FlightNumber' column
 df_falcon9.loc[:,'FlightNumber'] = list(range(1, df_falcon9.shape[0]+1))
 
-print('Missing Values Before: \n', df_falcon9.isnull().sum())
+# print('Missing Values Before: \n', df_falcon9.isnull().sum())
 
 # Calculate below the mean for the PayloadMass using the .mean(). Then use the mean and the .replace() function to replace `np.nan` values in the data with the mean you calculated.
 mean = df_falcon9['PayloadMass'].mean()
 df_falcon9['PayloadMass'] = df_falcon9['PayloadMass'].replace(np.nan, mean)
 
-print('Missing Values After: \n', df_falcon9.isnull().sum())
+# print('Missing Values After: \n', df_falcon9.isnull().sum())
+print('Total Falcon 9 Launches:', len(df_falcon9))
 
 # ========================== DataFrame Table ========================== #
 
