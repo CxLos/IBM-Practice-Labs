@@ -22,11 +22,11 @@ from dash import dcc, html
 
 # ============================= Load Data ============================= #
 
-# df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-ML0101EN-SkillsNetwork/labs/Module%204/data/Cust_Segmentation.csv")
+# df = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DS0321EN-SkillsNetwork/datasets/dataset_part_1.csv")
 
 current_dir = os.getcwd()
 script_dir = os.path.dirname(os.path.abspath(__file__))
-data_path = 'data/.csv'
+data_path = 'data/spacex_part_1.csv'
 file_path = os.path.join(script_dir, data_path)
 df = pd.read_csv(file_path)
 
@@ -35,25 +35,35 @@ df = pd.read_csv(file_path)
 
 # ========================== Data Pre Processing ========================== #
 
+# print(df.head())
+print(df.info())
+# print(df.describe())
+# print(df.isnull().sum())
+# print(df.columns)
+# print(df.dtypes)
 
+# ========================== Questions ========================== #
 
-# ========================== K - Means ========================== #
+print(df['LaunchSite'].value_counts())
+print(df['Orbit'].value_counts())
+print(df['Outcome'].value_counts())
 
+# Use the method <code>.value_counts()</code> on the column <code>Outcome</code> to determine the number of <code>landing_outcomes</code>.Then assign it to a variable landing_outcomes.
+landing_outcome = df['Outcome'].value_counts()
 
+# Create Keys for landing outcomes
+for i,outcome in enumerate(landing_outcome.keys()):
+    print(i,outcome)
 
-# ========================== Train / Test Split ========================== #
+# Target just the bad outcomes
+bad_outcomes=set(landing_outcome.keys()[[1,3,5,6,7]])
 
-# X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=4)
-# print ('Train set:', X_train.shape,  y_train.shape)
-# print ('Test set:', X_test.shape,  y_test.shape)
+# Using the <code>Outcome</code>,  create a list where the element is zero if the corresponding  row  in  <code>Outcome</code> is in the set <code>bad_outcome</code>; otherwise, it's one. Then assign it to the variable <code>landing_class</code>:
+landing_class = df['Outcome'].apply(lambda x: 0 if x in bad_outcomes else 1)
+df['Class']=landing_class
 
-# ========================== Modeling ========================== #
-
-
-
-# ========================== Data Visualization ========================== #
-
-
+print(df.head())
+# 
 
 # ========================== DataFrame Table ========================== #
 
@@ -175,16 +185,16 @@ html.Div(
 ),
 ])
 
-# if __name__ == '__main__':
-#     app.run_server(debug=
-#                    True)
+if __name__ == '__main__':
+    app.run_server(debug=
+                   True)
                 #    False)
 
 # ================================ Export Data =============================== #
 
-# updated_path = 'data/.csv'
+# updated_path = 'data/spacex_part_1.csv'
 # data_path = os.path.join(script_dir, updated_path)
-# cust_df.to_csv(data_path, index=False)
+# df.to_csv(data_path, index=False)
 # print(f"DataFrame saved to {data_path}")
 
 # ============================== Update Dash ================================ #
