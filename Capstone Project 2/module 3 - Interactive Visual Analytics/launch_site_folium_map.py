@@ -1,12 +1,16 @@
 
 # =============================== Imports ============================= #
 
+from folium.plugins import MarkerCluster
+from folium.plugins import MousePosition
+from folium.features import DivIcon
 import plotly.graph_objects as go
 import plotly.colors as pc
 import plotly.express as px
 import matplotlib.pyplot as plt
 import csv, sqlite3
 import itertools
+import folium
 import seaborn as sns
 import pandas as pd
 import pylab as pl
@@ -17,18 +21,18 @@ from dash import dcc, html
 
 # ============================= Load Data ============================= #
 
-# df=pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DS0321EN-SkillsNetwork/datasets/dataset_part_2.csv")
+# df=pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-DS0321EN-SkillsNetwork/datasets/spacex_launch_geo.csv")
 
 current_dir = os.getcwd()
 script_dir = os.path.dirname(os.path.abspath(__file__))
-data_path = 'data/spacex_part_2.csv'
+data_path = 'data/spacex_geo.csv'
 file_path = os.path.join(script_dir, data_path)
 df = pd.read_csv(file_path)
 
 # print(current_dir)
 # print(script_dir)
 
-# ========================== Data Pre Processing ========================== #
+# ========================== Exploratory Data ========================== #
 
 # print(df.head())
 # print(df.info())
@@ -37,129 +41,40 @@ df = pd.read_csv(file_path)
 # print(df.columns)
 # print(df.dtypes)
 
-# ========================== Columns ========================== #
+# ========================== Data Pre Processing ========================== #
 
-#  #   Column             Non-Null Count  Dtype
-# ---  ------             --------------  -----
-#  0   Date               101 non-null    object
-#  1   Time (UTC)         101 non-null    object
-#  2   Booster_Version    101 non-null    object
-#  3   Launch_Site        101 non-null    object
-#  4   Payload            101 non-null    object
-#  5   PAYLOAD_MASS__KG_  101 non-null    int64
-#  6   Orbit              101 non-null    object
-#  7   Customer           101 non-null    object
-#  8   Mission_Outcome    101 non-null    object
-#  9   Landing_Outcome    101 non-null    object
+# Select relevant sub-columns: `Launch Site`, `Lat(Latitude)`, `Long(Longitude)`, `class`
+spacex_df = df[['Launch Site', 'Lat', 'Long', 'class']]
+launch_sites_df = spacex_df.groupby(['Launch Site'], as_index=False).first()
+launch_sites_df = launch_sites_df[['Launch Site', 'Lat', 'Long']]
+print(df.head())
+
+# Start location is NASA Johnson Space Center
+nasa_coordinate = [29.559684888503615, -95.0830971930759]
+site_map = folium.Map(location=nasa_coordinate, zoom_start=10)
+
+# Create a blue circle at NASA Johnson Space Center's coordinate with a popup label showing its name
+circle = folium.Circle(nasa_coordinate, radius=1000, color='#d35400', fill=True).add_child(folium.Popup('NASA Johnson Space Center'))
+# Create a blue circle at NASA Johnson Space Center's coordinate with a icon showing its name
+marker = folium.map.Marker(
+    nasa_coordinate,
+    # Create an icon as a text label
+    icon=DivIcon(
+        icon_size=(20,20),
+        icon_anchor=(0,0),
+        html='<div style="font-size: 12; color:#d35400;"><b>%s</b></div>' % 'NASA JSC',
+        )
+    )
+site_map.add_child(circle)
+site_map.add_child(marker)
+
+# Initial the map
+site_map = folium.Map(location=nasa_coordinate, zoom_start=5)
+# For each launch site, add a Circle object based on its coordinate (Lat, Long) values. In addition, add Launch site name as a popup label
 
 # ========================== Questions ========================== #
 
-# First, let's try to see how the `FlightNumber` (indicating the continuous launch attempts.) and `Payload` variables would affect the launch outcome.
 
-# We can plot out the <code>FlightNumber</code> vs. <code>PayloadMass</code>and overlay the outcome of the launch. We see that as the flight number increases, the first stage is more likely to land successfully. The payload mass is also important; it seems the more massive the payload, the less likely the first stage will return.
-
-fig_0 = px.scatter(
-    df,
-    x="FlightNumber",
-    y="PayloadMass",
-    color="Class",
-    title="Flight Number vs Payload Mass",
-    labels={"FlightNumber": "Flight Number", "PayloadMass": "Payload Mass (kg)"}
-)
-
-# Update the layout of the figure
-fig_0.update_layout(
-    xaxis_title="Flight Number",
-    yaxis_title="Payload Mass (kg)",
-    title_font_size=20,
-    xaxis_title_font_size=20,
-    yaxis_title_font_size=20
-)
-
-# sns.catplot(y="PayloadMass", x="FlightNumber", hue="Class", data=df, aspect = 5)
-# plt.xlabel("Flight Number",fontsize=20)
-# plt.ylabel("Pay load Mass (kg)",fontsize=20)
-# plt.show()
-
-# 1. Use the function catplot to plot FlightNumber vs LaunchSite, set the  parameter x  parameter to FlightNumber, set the y to Launch Site and set the parameter hue to 'class'
-fig_1 = px.scatter(
-    df, 
-    x='FlightNumber', 
-    y='LaunchSite', 
-    color='Class', 
-    title='Flight Number vs Launch Site')
-
-# 2. Plot a scatter point chart with x axis to be Pay Load Mass (kg) and y axis to be the launch site, and hue to be the class value
-
-fig_2 = px.scatter(
-    df,
-    x='PayloadMass',
-    y='LaunchSite',
-    color='Class',
-    title='Payload Mass vs Launch Site'
-)
-
-# 3. Let's create a `bar chart` for the sucess rate of each orbit
-
-fig_3 = px.bar(
-    df,
-    x='Orbit',
-    y='Class',
-    title='Success Rate of Each Orbit'
-)
-
-# 4. Plot a scatter point chart with x axis to be FlightNumber and y axis to be the Orbit, and hue to be the class value
-
-fig_4 = px.scatter(
-    df,
-    x='FlightNumber', 
-    y='Orbit',
-    color='Class',
-    title='Flight Number vs Orbit'
-)
-
-# 5. Plot a scatter point chart with x axis to be Payload and y axis to be the Orbit, and hue to be the class value
-
-fig_5 = px.scatter(
-    df,
-    x='PayloadMass',
-    y='Orbit',
-    color='Class',
-    title='Payload Mass vs Orbit'
-)
-
-# 6. plot a line chart with x axis to be Year and y axis to be average success rate, to get the average launch success trend. 
-
-# A function to Extract years from the date 
-year=[]
-def Extract_year(date):
-    for i in df["Date"]:
-        year.append(i.split("-")[0])
-    return year
-
-# Plot a line chart with x axis to be the extracted year and y axis to be the success rate
-df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
-df["Year"] = df["Date"].dt.year
-suc_rate=df.groupby("Year")["Class"].mean().reset_index()
-
-fig_6 = px.line(
-    suc_rate,
-    x='Year',
-    y='Class',
-    title='Yearly Success Rate'
-)
-
-features = df[['FlightNumber', 'PayloadMass', 'Orbit', 'LaunchSite', 'Flights', 'GridFins', 'Reused', 'Legs', 'LandingPad', 'Block', 'ReusedCount', 'Serial']]
-# print(features.head())
-
-# 7. Use the function get_dummies and features dataframe to apply OneHotEncoder to the column Orbits, LaunchSite, LandingPad, and Serial. Assign the value to the variable features_one_hot, display the results using the method head. Your result dataframe must include all features including the encoded ones.
-df_encoded = pd.get_dummies(features, columns=['Orbit', 'LaunchSite', 'LandingPad', 'Serial'])
-# print(df_encoded.head())
-
-# 8. Now that our features_one_hot dataframe only contains numbers cast the entire dataframe to variable type float64
-df_encoded = df_encoded.astype('float64') 
-# print(df_encoded.head())
-# print(len(df_encoded.columns))
 
 # ========================== DataFrame Table ========================== #
 
@@ -242,7 +157,7 @@ html.Div(
             className='graph1',
             children=[
                 dcc.Graph(
-                  figure=fig_0
+                  # figure=fig_0
                 )
             ]
         ),
@@ -250,7 +165,7 @@ html.Div(
             className='graph2',
             children=[
                 dcc.Graph(
-                  figure=fig_1
+                  # figure=fig_1
                 )
             ]
         )
@@ -265,7 +180,7 @@ html.Div(
             className='graph1',
             children=[
                 dcc.Graph(
-                  figure=fig_2
+                  # figure=fig_2
                 )
             ]
         ),
@@ -273,7 +188,7 @@ html.Div(
             className='graph2',
             children=[
                 dcc.Graph(
-                  figure=fig_3
+                  # figure=fig_3
                 )
             ]
         )
@@ -287,7 +202,7 @@ html.Div(
             className='graph1',
             children=[
                 dcc.Graph(
-                  figure=fig_4
+                  # figure=fig_4
                 )
             ]
         ),
@@ -295,7 +210,7 @@ html.Div(
             className='graph2',
             children=[
                 dcc.Graph(
-                  figure=fig_5
+                  # figure=fig_5
                 )
             ]
         )
@@ -309,7 +224,7 @@ html.Div(
             className='graph1',
             children=[
                 dcc.Graph(
-                  figure=fig_6
+                  # figure=fig_6
                 )
             ]
         ),
@@ -354,10 +269,10 @@ html.Div(
 
 # ================================ Export Data =============================== #
 
-# updated_path = 'data/spacex_part_2.csv'
-# data_path = os.path.join(script_dir, updated_path)
-# df.to_csv(data_path, index=False)
-# print(f"DataFrame saved to {data_path}")
+updated_path = 'data/spacex_geo.csv'
+data_path = os.path.join(script_dir, updated_path)
+df.to_csv(data_path, index=False)
+print(f"DataFrame saved to {data_path}")
 
 # ============================== Update Dash ================================ #
 
