@@ -19,7 +19,7 @@ from dash import dcc, html
 
 current_dir = os.getcwd()
 script_dir = os.path.dirname(os.path.abspath(__file__))
-data_path = 'data/spacex_part_2.csv'
+data_path = 'data/spacex_part_1.csv'
 file_path = os.path.join(script_dir, data_path)
 df = pd.read_csv(file_path)
 
@@ -262,7 +262,7 @@ html.Div(
 
 # ================================ Export Data =============================== #
 
-# updated_path = 'data/spacex_part_2.csv'
+# updated_path = 'data/spacex_part_1.csv'
 # data_path = os.path.join(script_dir, updated_path)
 # df.to_csv(data_path, index=False)
 # print(f"DataFrame saved to {data_path}")
