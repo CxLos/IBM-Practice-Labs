@@ -101,29 +101,64 @@ fig_2 = px.scatter(
 
 # 3. Let's create a `bar chart` for the sucess rate of each orbit
 
+fig_3 = px.bar(
+    df,
+    x='Orbit',
+    y='Class',
+    title='Success Rate of Each Orbit'
+)
+
 # 4. Plot a scatter point chart with x axis to be FlightNumber and y axis to be the Orbit, and hue to be the class value
+
+fig_4 = px.scatter(
+    df,
+    x='FlightNumber', 
+    y='Orbit',
+    color='Class',
+    title='Flight Number vs Orbit'
+)
 
 # 5. Plot a scatter point chart with x axis to be Payload and y axis to be the Orbit, and hue to be the class value
 
-# 6. plot a line chart with x axis to be <code>Year</code> and y axis to be average success rate, to get the average launch success trend. 
+fig_5 = px.scatter(
+    df,
+    x='PayloadMass',
+    y='Orbit',
+    color='Class',
+    title='Payload Mass vs Orbit'
+)
+
+# 6. plot a line chart with x axis to be Year and y axis to be average success rate, to get the average launch success trend. 
 
 # A function to Extract years from the date 
-# year=[]
-# def Extract_year(date):
-#     for i in df["Date"]:
-#         year.append(i.split("-")[0])
-#     return year
-# # Plot a line chart with x axis to be the extracted year and y axis to be the success rate
-# df["Year"]=Extract_year(df["Date"])
-# df["Class"]=df["Class"].astype(int)
-# suc_rate=df.groupby("Year")["Class"].mean().reset_index()
+year=[]
+def Extract_year(date):
+    for i in df["Date"]:
+        year.append(i.split("-")[0])
+    return year
 
-# features = df[['FlightNumber', 'PayloadMass', 'Orbit', 'LaunchSite', 'Flights', 'GridFins', 'Reused', 'Legs', 'LandingPad', 'Block', 'ReusedCount', 'Serial']]
-# features.head()
+# Plot a line chart with x axis to be the extracted year and y axis to be the success rate
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+df["Year"] = df["Date"].dt.year
+suc_rate=df.groupby("Year")["Class"].mean().reset_index()
+
+fig_6 = px.line(
+    suc_rate,
+    x='Year',
+    y='Class',
+    title='Yearly Success Rate'
+)
+
+features = df[['FlightNumber', 'PayloadMass', 'Orbit', 'LaunchSite', 'Flights', 'GridFins', 'Reused', 'Legs', 'LandingPad', 'Block', 'ReusedCount', 'Serial']]
+# print(features.head())
 
 # 7. Use the function get_dummies and features dataframe to apply OneHotEncoder to the column Orbits, LaunchSite, LandingPad, and Serial. Assign the value to the variable features_one_hot, display the results using the method head. Your result dataframe must include all features including the encoded ones.
+df_encoded = pd.get_dummies(features, columns=['Orbit', 'LaunchSite', 'LandingPad', 'Serial'])
+# print(df_encoded.head())
 
 # 8. Now that our features_one_hot dataframe only contains numbers cast the entire dataframe to variable type float64
+df_encoded = df_encoded.astype('float64') 
+# print(df_encoded.head())
 
 # ========================== DataFrame Table ========================== #
 
@@ -237,7 +272,7 @@ html.Div(
             className='graph2',
             children=[
                 dcc.Graph(
-
+                  figure=fig_3
                 )
             ]
         )
@@ -251,7 +286,7 @@ html.Div(
             className='graph1',
             children=[
                 dcc.Graph(
-
+                  figure=fig_4
                 )
             ]
         ),
@@ -259,7 +294,7 @@ html.Div(
             className='graph2',
             children=[
                 dcc.Graph(
-
+                  figure=fig_5
                 )
             ]
         )
@@ -273,7 +308,7 @@ html.Div(
             className='graph1',
             children=[
                 dcc.Graph(
-
+                  figure=fig_6
                 )
             ]
         ),
