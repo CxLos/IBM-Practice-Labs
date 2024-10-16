@@ -1,6 +1,7 @@
 
 # =============================== Imports ============================= #
 
+from math import sin, cos, sqrt, atan2, radians
 from folium.plugins import MarkerCluster
 from folium.plugins import MousePosition
 from folium.features import DivIcon
@@ -41,17 +42,17 @@ df = pd.read_csv(file_path)
 # print(df.columns)
 # print(df.dtypes)
 
-# ========================== Data Pre Processing ========================== #
+# ========================== 1. Mark All Launch Sites on the Map ========================== #
 
 # Select relevant sub-columns: `Launch Site`, `Lat(Latitude)`, `Long(Longitude)`, `class`
 spacex_df = df[['Launch Site', 'Lat', 'Long', 'class']]
 launch_sites_df = spacex_df.groupby(['Launch Site'], as_index=False).first()
-launch_sites_df = launch_sites_df[['Launch Site', 'Lat', 'Long']]
-print(df.head())
+launch_sites_df = launch_sites_df[['Launch Site', 'Lat', 'Long','class']]
+# print(df.head())
 
 # Start location is NASA Johnson Space Center
 nasa_coordinate = [29.559684888503615, -95.0830971930759]
-site_map = folium.Map(location=nasa_coordinate, zoom_start=10)
+site_map = folium.Map(location=nasa_coordinate, zoom_start=10, width='100%', height='100%')
 
 # Create a blue circle at NASA Johnson Space Center's coordinate with a popup label showing its name
 circle = folium.Circle(nasa_coordinate, radius=1000, color='#d35400', fill=True).add_child(folium.Popup('NASA Johnson Space Center'))
@@ -68,13 +69,139 @@ marker = folium.map.Marker(
 site_map.add_child(circle)
 site_map.add_child(marker)
 
-# Initial the map
+# Initiate the map
 site_map = folium.Map(location=nasa_coordinate, zoom_start=5)
+
 # For each launch site, add a Circle object based on its coordinate (Lat, Long) values. In addition, add Launch site name as a popup label
+for index, site in launch_sites_df.iterrows():
+    # Create a blue circle at NASA Johnson Space Center's coordinate with a icon showing its name
+    circle = folium.Circle([site['Lat'], site['Long']], radius=1000, color='#d35400', fill=True).add_child(folium.Popup(site['Launch Site']))
+    marker = folium.map.Marker(
+        [site['Lat'], site['Long']],
+        # Create an icon as a text label
+        icon=DivIcon(
+            icon_size=(20,20),
+            icon_anchor=(0,0),
+            html='<div style="font-size: 12; color:#d35400;"><b>%s</b></div>' % site['Launch Site'],
+            )
+        )
+    site_map.add_child(circle)
+    site_map.add_child(marker)
 
-# ========================== Questions ========================== #
+map_path = 'spacex_map.html'
+map_file = os.path.join(script_dir, map_path)
+site_map.save(map_file)
+site_map_html = open(map_file, 'r').read()
 
+# =============== 2. Mark Successful / Failed Launches for each site ================== #
 
+marker_cluster = MarkerCluster()
+
+# Create a new column in `launch_sites` dataframe called `marker_color` to store the marker colors based on the `class` value
+launch_sites_df['marker_color'] = launch_sites_df['class'].apply(lambda x: 'red' if x == 0 else 'green')
+
+# Function to assign color to launch outcome
+def assign_marker_color(launch_outcome):
+    if launch_outcome == 1:
+        return 'green'
+    else:
+        return 'red'
+    
+spacex_df['marker_color'] = spacex_df['class'].apply(assign_marker_color)
+
+# Add marker_cluster to current site_map
+site_map.add_child(marker_cluster)
+
+# for each row in spacex_df data frame
+# create a Marker object with its coordinate
+# and customize the Marker's icon property to indicate if this launch was successed or failed, 
+# e.g., icon=folium.Icon(color='white', icon_color=row['marker_color']
+for index, record in spacex_df.iterrows():
+    # TODO: Create and add a Marker cluster to the site map
+    marker = folium.Marker([record['Lat'], record['Long']], icon=folium.Icon(color='white', icon_color=record['marker_color']))
+
+    marker_cluster.add_child(marker)
+
+# ========= 3. Calculate the distances between a launch site to its proximities ========= #
+
+# Add Mouse Position to get the coordinate (Lat, Long) for a mouse over on the map
+formatter = "function(num) {return L.Util.formatNum(num, 5);};"
+mouse_position = MousePosition(
+    position='topright',
+    separator=' Long: ',
+    empty_string='NaN',
+    lng_first=False,
+    num_digits=20,
+    prefix='Lat:',
+    lat_formatter=formatter,
+    lng_formatter=formatter,
+)
+
+site_map.add_child(mouse_position)
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    # approximate radius of earth in km
+    R = 6373.0
+
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+    return distance
+
+# Mark down a point on the closest coastline using MousePosition and calculate the distance between the coastline point and the launch site.
+# e.g.,: Lat: 28.56367  Lon: -80.57163
+# distance_coastline = calculate_distance(launch_site_lat, launch_site_lon, coastline_lat, coastline_lon)
+
+lat1 = 28.56367
+lon1 = -80.57163
+lat2 = 29.559684888503615
+lon2 = -95.0830971930759
+
+distance_coastline = calculate_distance(lat1, lon1, lat2, lon2)
+
+# Coordinates of the closest coastline point
+coastline_lat = lat2
+coastline_lon = lon2
+launch_site_lat = lat1
+launch_site_lon = lon1
+
+# Create and add a folium.Marker on your selected closest coastline point on the map
+# Display the distance between coastline point and launch site using the icon property
+# for example
+# distance_marker = folium.Marker(
+#    coordinate,
+#    icon=DivIcon(
+#        icon_size=(20,20),
+#        icon_anchor=(0,0),
+#        html='<div style="font-size: 12; color:#d35400;"><b>%s</b></div>' % "{:10.2f} KM".format(distance),
+#        )
+#    )
+
+distance_marker = folium.Marker(
+    [coastline_lat, coastline_lon],
+    icon=DivIcon(
+        icon_size=(20,20),
+        icon_anchor=(0,0),
+        html='<div style="font-size: 12; color:#d35400;"><b>%s</b></div>' % "{:10.2f} KM".format(distance_coastline),
+        )
+      )
+                   
+site_map.add_child(distance_marker)
+
+# Create a `folium.PolyLine` object using the coastline coordinates and launch site coordinate
+# lines=folium.PolyLine(locations=coordinates, weight=1)
+lines = folium.PolyLine(locations=[[launch_site_lat, launch_site_lon], [coastline_lat, coastline_lon]], weight=1)
+
+site_map.add_child(lines)
 
 # ========================== DataFrame Table ========================== #
 
@@ -149,130 +276,39 @@ html.Div(
     ]
 ),
 
-# ROW 1
 html.Div(
-    className='row1',
+    className='row3',
     children=[
         html.Div(
-            className='graph1',
+            className='graph5',
             children=[
-                dcc.Graph(
-                  # figure=fig_0
-                )
-            ]
-        ),
-        html.Div(
-            className='graph2',
-            children=[
-                dcc.Graph(
-                  # figure=fig_1
+                html.H1(
+                    'Spacex Houston', 
+                    className='zip'
+                ),
+                html.Iframe(
+                    className='folium',
+                    id='folium-map',
+                    srcDoc=site_map_html
+                    ,style={'border': 'none', 'width': '1800px', 'height': '800px'}
                 )
             ]
         )
     ]
-),
-
-# ROW 2
-html.Div(
-    className='row2',
-    children=[
-        html.Div(
-            className='graph1',
-            children=[
-                dcc.Graph(
-                  # figure=fig_2
-                )
-            ]
-        ),
-        html.Div(
-            className='graph2',
-            children=[
-                dcc.Graph(
-                  # figure=fig_3
-                )
-            ]
-        )
-    ]
-),
-# ROW 2
-html.Div(
-    className='row2',
-    children=[
-        html.Div(
-            className='graph1',
-            children=[
-                dcc.Graph(
-                  # figure=fig_4
-                )
-            ]
-        ),
-        html.Div(
-            className='graph2',
-            children=[
-                dcc.Graph(
-                  # figure=fig_5
-                )
-            ]
-        )
-    ]
-),
-# ROW 2
-html.Div(
-    className='row2',
-    children=[
-        html.Div(
-            className='graph1',
-            children=[
-                dcc.Graph(
-                  # figure=fig_6
-                )
-            ]
-        ),
-        html.Div(
-            className='graph2',
-            children=[
-                dcc.Graph(
-
-                )
-            ]
-        )
-    ]
-),
-# ROW 2
-html.Div(
-    className='row2',
-    children=[
-        html.Div(
-            className='graph1',
-            children=[
-                dcc.Graph(
-
-                )
-            ]
-        ),
-        html.Div(
-            className='graph2',
-            children=[
-                dcc.Graph(
-
-                )
-            ]
-        )
-    ]
-),
+)
 ])
 
-# if __name__ == '__main__':
-#     app.run_server(debug=
-#                    True)
+if __name__ == '__main__':
+    app.run_server(debug=
+                   True)
                 #    False)
 
 # ================================ Export Data =============================== #
 
-updated_path = 'data/spacex_geo.csv'
-data_path = os.path.join(script_dir, updated_path)
-df.to_csv(data_path, index=False)
-print(f"DataFrame saved to {data_path}")
+# updated_path = 'data/spacex_geo.csv'
+# data_path = os.path.join(script_dir, updated_path)
+# df.to_csv(data_path, index=False)
+# print(f"DataFrame saved to {data_path}")
 
 # ============================== Update Dash ================================ #
 
