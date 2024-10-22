@@ -97,15 +97,111 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_
 LR = LogisticRegression()
 LR.fit(X_train, Y_train)
 
+parameters ={'C':[0.01,0.1,1],
+             'penalty':['l2'],
+             'solver':['lbfgs']}
+
 GridSearchCV(
     estimator=LR,
     param_grid={'C': np.logspace(-5, 8, 15), 'penalty': ['l1', 'l2']},
     cv=10
 )
 
-parameters ={'C':[0.01,0.1,1],
-             'penalty':['l2'],
-             'solver':['lbfgs']}
+# Perform the grid search with cross-validation
+logreg_cv = GridSearchCV(
+    LR, # The logistic regression model
+    parameters, # The dictionary of parameters
+    cv=5) # The number of folds
+
+# Fit the model to the data (assuming X_train and y_train are your training data)
+logreg_cv.fit(X_train, Y_train)
+
+# Display the best parameters using the data attribute best_params and accuracy on the validation data using the data attribute best_score_
+print("tuned hpyerparameters :(best parameters) ",logreg_cv.best_params_)
+print("accuracy :",logreg_cv.best_score_)
+
+# 5. Calculate the accuracy on the test data using the method <code>score</code>:
+# Calculate the accuracy on the test data using the method score:
+print("accuracy :", logreg_cv.score(X_test, Y_test))
+
+# Confusion Matrix
+yhat=logreg_cv.predict(X_test)
+plot_confusion_matrix(Y_test,yhat)
+
+# 6. Create a support vector machine object then create a  GridSearchCV object  <code>svm_cv</code> with cv = 10.  Fit the object to find the best parameters from the dictionary <code>parameters</code>.
+svm = SVC()
+
+parameters = {'kernel':('linear', 'rbf','poly','rbf', 'sigmoid'),
+              'C': np.logspace(-3, 3, 5),
+              'gamma':np.logspace(-3, 3, 5)}
+
+svm_cv = GridSearchCV(svm, parameters, cv=10)
+svm_cv.fit(X_train, Y_train)
+
+# 7. Calculate the accuracy on the test data using the method <code>score</code>:
+print("accuracy :", svm_cv.score(X_test, Y_test))
+
+# Confusion Matrix
+yhat=svm_cv.predict(X_test)
+plot_confusion_matrix(Y_test,yhat)
+
+# 8. Create a decision tree classifier object then  create a  GridSearchCV object  <code>tree_cv</code> with cv = 10.  Fit the object to find the best parameters from the dictionary <code>parameters</code>.
+tree = DecisionTreeClassifier()
+
+parameters = {'criterion': ['gini', 'entropy'],
+     'splitter': ['best', 'random'],
+     'max_depth': [2*n for n in range(1,10)],
+     'max_features': ['auto', 'sqrt'],
+     'min_samples_leaf': [1, 2, 4],
+     'min_samples_split': [2, 5, 10]}
+
+tree_cv = GridSearchCV(tree, parameters, cv=10)
+tree_cv.fit(X_train, Y_train)
+
+print("tuned hpyerparameters :(best parameters) ",tree_cv.best_params_)
+print("accuracy :",tree_cv.best_score_)
+
+# 9. Calculate the accuracy of tree_cv on the test data using the method <code>score</code>:
+print("accuracy :", tree_cv.score(X_test, Y_test))
+
+# Confusion Matrix
+yhat = tree_cv.predict(X_test)
+plot_confusion_matrix(Y_test,yhat)
+
+# 10. Create a k nearest neighbors object then  create a  GridSearchCV object  <code>knn_cv</code> with cv = 10.  Fit the object to find the best parameters from the dictionary <code>parameters</code>.
+
+parameters = {'n_neighbors': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 
+              'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'], 
+              'p': [1,2]} # Create a k-NN classifier with 7 neighbors
+
+KNN = KNeighborsClassifier()
+
+knn_cv = GridSearchCV(KNN, parameters, cv=10)
+knn_cv.fit(X_train, Y_train)
+
+print("tuned hpyerparameters :(best parameters) ",knn_cv.best_params_)
+print("accuracy :",knn_cv.best_score_)
+
+# 11. Calculate the accuracy of knn_cv on the test data using the method <code>score</code>:
+print("accuracy :", knn_cv.score(X_test, Y_test))
+
+# Confusion Matrix
+yhat = knn_cv.predict(X_test)
+plot_confusion_matrix(Y_test,yhat)
+
+# 12. Find the method that performs the best:
+best_score = max(logreg_cv.best_score_, svm_cv.best_score_, tree_cv.best_score_, knn_cv.best_score_)
+
+if best_score == logreg_cv.best_score_:
+    print('Logistic Regression')
+elif best_score == svm_cv.best_score_:
+    print('Support Vector Machine')
+elif best_score == tree_cv.best_score_:
+    print('Decision Tree')
+else:
+    print('K Nearest Neighbors')
+
+# Decision Tree is the best method
 
 # ========================== Questions ========================== #
 
