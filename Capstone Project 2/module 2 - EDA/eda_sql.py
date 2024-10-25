@@ -57,7 +57,7 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 
 # ========================== Questions ========================== #
 
-# 1. Display the names of the unique launch sites  in the space mission
+# 1. Display the names of the unique launch sites in the space mission
 # query = pd.read_sql_query("""
 #   SELECT DISTINCT Launch_Site FROM SPACEXTBL
 #   """, con)
@@ -70,8 +70,19 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 
 # 2. Display 5 records where launch sites begin with the string 'CCA' 
 # query = pd.read_sql_query("""
-#   SELECT * FROM SPACEXTBL WHERE Launch_Site LIKE 'CCA%'
+#   SELECT Date, "Time (UTC)", Launch_Site
+#   FROM SPACEXTBL WHERE Launch_Site LIKE 'CCA%'
+#   Limit 5
 #   """, con)
+
+# print(query)
+
+#          Date Time (UTC)  Launch_Site
+# 0  2010-06-04   18:45:00  CCAFS LC-40
+# 1  2010-12-08   15:43:00  CCAFS LC-40
+# 2  2012-05-22    7:44:00  CCAFS LC-40
+# 3  2012-10-08    0:35:00  CCAFS LC-40
+# 4  2013-03-01   15:10:00  CCAFS LC-40
 
 # 3. Display the total payload mass carried by boosters launched by NASA (CRS)
 # query = pd.read_sql_query("""
@@ -80,12 +91,22 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 #   WHERE Customer='NASA (CRS)'
 #   """, con)
 
+# print(query)
+
+#    SUM(PAYLOAD_MASS__KG_)
+# 0                   45596
+
 # 4. Display average payload mass carried by booster version F9 v1.1
 # query = pd.read_sql_query("""
-#   # SELECT AVG(PAYLOAD_MASS__KG_)
-#   # FROM SPACEXTBL
-#   # WHERE Booster_Version='F9 v1.1'
-#   # """, con)
+#   SELECT AVG(PAYLOAD_MASS__KG_)
+#   FROM SPACEXTBL
+#   WHERE Booster_Version='F9 v1.1'
+#   """, con)
+
+# print(query)
+
+#    AVG(PAYLOAD_MASS__KG_)
+# 0                  2928.4
 
 # 5. List the date when the first succesful landing outcome in ground pad was acheived.
 # query = pd.read_sql_query("""
@@ -93,6 +114,11 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 #   FROM SPACEXTBL
 #   WHERE Landing_Outcome='Success (ground pad)'
 #   """, con)
+
+# print(query)
+
+#     MIN(Date)
+# 0  2015-12-22
 
 # 6. List the names of the boosters which have success in drone ship and have payload mass greater than 4000 but less than 6000
 # query = pd.read_sql_query("""
@@ -102,12 +128,25 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 #   AND PAYLOAD_MASS__KG_ BETWEEN 4000 AND 6000
 #   """, con)
 
+# print(query)
+
+#   Booster_Version       Landing_Outcome
+# 0     F9 FT B1022  Success (drone ship)
+# 1     F9 FT B1026  Success (drone ship)
+# 2  F9 FT  B1021.2  Success (drone ship)
+# 3  F9 FT  B1031.2  Success (drone ship)
+
 # 7. List the total number of successful and failure mission outcomes
 # query = pd.read_sql_query("""
 #   SELECT Count(Mission_Outcome)
 #   FROM SPACEXTBL
 #   WHERE Mission_Outcome='Success' OR Mission_Outcome='Failure'
 #   """, con)
+
+# print(query)
+
+#    Count(Mission_Outcome)
+# 0                      98
 
 # 8. List the names of the booster_versions which have carried the maximum payload mass. Use a subquery
 # query = pd.read_sql_query("""
@@ -116,6 +155,11 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 #   WHERE PAYLOAD_MASS__KG_ = (SELECT MAX(PAYLOAD_MASS__KG_) FROM SPACEXTBL)
 #   """, con)
 
+# print(query)
+
+#   Booster_Version  MAX(PAYLOAD_MASS__KG_)
+# 0   F9 B5 B1048.4                   15600
+
 # 9. List the records which will display the month names, failure landing_outcomes in drone ship ,booster versions, launch_site for the months in year 2015.
 # query = pd.read_sql_query("""
 #   SELECT strftime('%B', (Date)) as Month, Landing_Outcome, Booster_Version, Launch_Site
@@ -123,6 +167,12 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 #   WHERE Landing_Outcome='Failure (drone ship)'
 #   AND strftime('%Y', (Date))='2015'
 #   """, con)
+
+# print(query)
+
+#   Month       Landing_Outcome Booster_Version  Launch_Site
+# 0  None  Failure (drone ship)   F9 v1.1 B1012  CCAFS LC-40
+# 1  None  Failure (drone ship)   F9 v1.1 B1015  CCAFS LC-40
 
 # 10. Rank the count of landing outcomes (such as Failure (drone ship) or Success (ground pad)) between the date 2010-06-04 and 2017-03-20, in descending order.
 # query = pd.read_sql_query("""
@@ -134,6 +184,16 @@ df.to_sql("SPACEXTBL", con, if_exists='replace', index=False,method="multi")
 #   """, con)
 
 # print(query)
+
+#           Landing_Outcome  Count
+# 0              No attempt     10
+# 1    Success (drone ship)      5
+# 2    Failure (drone ship)      5
+# 3    Success (ground pad)      3
+# 4      Controlled (ocean)      3
+# 5    Uncontrolled (ocean)      2
+# 6     Failure (parachute)      2
+# 7  Precluded (drone ship)      1
 
 # ========================== DataFrame Table ========================== #
 

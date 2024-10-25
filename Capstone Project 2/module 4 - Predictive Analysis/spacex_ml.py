@@ -92,6 +92,10 @@ X = transform.fit(X).transform(X)
 # 3. Split the data into training and test data sets
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=2)
 
+# length of test data
+# print(X_test.shape, Y_test.shape)
+# print(len(X_test), len(Y_test))
+
 # 4. Create a logistic regression object  then create a  GridSearchCV object  <code>logreg_cv</code> with cv = 10.  Fit the object to find the best parameters from the dictionary <code>parameters</code>.
 
 LR = LogisticRegression()
@@ -117,16 +121,16 @@ logreg_cv = GridSearchCV(
 logreg_cv.fit(X_train, Y_train)
 
 # Display the best parameters using the data attribute best_params and accuracy on the validation data using the data attribute best_score_
-print("tuned hpyerparameters :(best parameters) ",logreg_cv.best_params_)
-print("accuracy :",logreg_cv.best_score_)
+# print("tuned hpyerparameters :(best parameters) ",logreg_cv.best_params_)
+# print("accuracy :",logreg_cv.best_score_)
 
 # 5. Calculate the accuracy on the test data using the method <code>score</code>:
 # Calculate the accuracy on the test data using the method score:
-print("accuracy :", logreg_cv.score(X_test, Y_test))
+# print("accuracy :", logreg_cv.score(X_test, Y_test))
 
 # Confusion Matrix
 yhat=logreg_cv.predict(X_test)
-plot_confusion_matrix(Y_test,yhat)
+# plot_confusion_matrix(Y_test,yhat)
 
 # 6. Create a support vector machine object then create a  GridSearchCV object  <code>svm_cv</code> with cv = 10.  Fit the object to find the best parameters from the dictionary <code>parameters</code>.
 svm = SVC()
@@ -138,12 +142,15 @@ parameters = {'kernel':('linear', 'rbf','poly','rbf', 'sigmoid'),
 svm_cv = GridSearchCV(svm, parameters, cv=10)
 svm_cv.fit(X_train, Y_train)
 
+# print("tuned hpyerparameters :(best parameters) ",svm_cv.best_params_)
+# print("accuracy :",svm_cv.best_score_)
+
 # 7. Calculate the accuracy on the test data using the method <code>score</code>:
-print("accuracy :", svm_cv.score(X_test, Y_test))
+# print("accuracy :", svm_cv.score(X_test, Y_test))
 
 # Confusion Matrix
 yhat=svm_cv.predict(X_test)
-plot_confusion_matrix(Y_test,yhat)
+# plot_confusion_matrix(Y_test,yhat)
 
 # 8. Create a decision tree classifier object then  create a  GridSearchCV object  <code>tree_cv</code> with cv = 10.  Fit the object to find the best parameters from the dictionary <code>parameters</code>.
 tree = DecisionTreeClassifier()
@@ -158,15 +165,15 @@ parameters = {'criterion': ['gini', 'entropy'],
 tree_cv = GridSearchCV(tree, parameters, cv=10)
 tree_cv.fit(X_train, Y_train)
 
-print("tuned hpyerparameters :(best parameters) ",tree_cv.best_params_)
-print("accuracy :",tree_cv.best_score_)
+# print("tuned hpyerparameters :(best parameters) ",tree_cv.best_params_)
+# print("accuracy :",tree_cv.best_score_)
 
 # 9. Calculate the accuracy of tree_cv on the test data using the method <code>score</code>:
-print("accuracy :", tree_cv.score(X_test, Y_test))
+# print("accuracy :", tree_cv.score(X_test, Y_test))
 
 # Confusion Matrix
 yhat = tree_cv.predict(X_test)
-plot_confusion_matrix(Y_test,yhat)
+# plot_confusion_matrix(Y_test,yhat)
 
 # 10. Create a k nearest neighbors object then  create a  GridSearchCV object  <code>knn_cv</code> with cv = 10.  Fit the object to find the best parameters from the dictionary <code>parameters</code>.
 
@@ -179,29 +186,64 @@ KNN = KNeighborsClassifier()
 knn_cv = GridSearchCV(KNN, parameters, cv=10)
 knn_cv.fit(X_train, Y_train)
 
-print("tuned hpyerparameters :(best parameters) ",knn_cv.best_params_)
-print("accuracy :",knn_cv.best_score_)
+# print("tuned hpyerparameters :(best parameters) ",knn_cv.best_params_)
+# print("accuracy :",knn_cv.best_score_)
 
 # 11. Calculate the accuracy of knn_cv on the test data using the method <code>score</code>:
-print("accuracy :", knn_cv.score(X_test, Y_test))
+# print("accuracy :", knn_cv.score(X_test, Y_test))
 
 # Confusion Matrix
 yhat = knn_cv.predict(X_test)
-plot_confusion_matrix(Y_test,yhat)
+# plot_confusion_matrix(Y_test,yhat)
 
 # 12. Find the method that performs the best:
 best_score = max(logreg_cv.best_score_, svm_cv.best_score_, tree_cv.best_score_, knn_cv.best_score_)
 
-if best_score == logreg_cv.best_score_:
-    print('Logistic Regression')
-elif best_score == svm_cv.best_score_:
-    print('Support Vector Machine')
-elif best_score == tree_cv.best_score_:
-    print('Decision Tree')
-else:
-    print('K Nearest Neighbors')
+# if best_score == logreg_cv.best_score_:
+#     print('Logistic Regression')
+# elif best_score == svm_cv.best_score_:
+#     print('Support Vector Machine')
+# elif best_score == tree_cv.best_score_:
+#     print('Decision Tree')
+# else:
+#     print('K Nearest Neighbors')
 
 # Decision Tree is the best method
+
+# Scores of each model:
+
+logreg_score = logreg_cv.best_score_
+svm_score = svm_cv.best_score_
+tree_score = tree_cv.best_score_
+knn_score = knn_cv.best_score_
+
+
+# Create a DataFrame with the model names and their corresponding accuracy scores
+accuracy_scores = pd.DataFrame({
+    'Model': ['Logistic Regression', 'Support Vector Machine', 'Decision Tree', 'K-Nearest Neighbors'],
+    'Accuracy Score': [logreg_score, svm_score, tree_score, knn_score]
+})
+
+# Create a bar chart using Plotly
+fig = px.bar(
+    accuracy_scores,
+    x='Accuracy Score',
+    y='Model',
+    color='Model',
+    title='Accuracy Scores of Different Models',
+    text='Accuracy Score',
+    # orientation='h',
+    labels={'Accuracy Score': 'Accuracy Score'}
+)
+
+# Customize the layout
+fig.update_layout(
+    title_x=0.5,
+    font=dict(family='Calibri', size=17, color='black'),
+    yaxis=dict(title='Accuracy Score'),
+    xaxis=dict(title='Model'),
+    showlegend=False
+)
 
 # ========================== Questions ========================== #
 
@@ -288,7 +330,7 @@ html.Div(
             className='graph1',
             children=[
                 dcc.Graph(
-                  # figure=fig_0
+                  figure=fig
                 )
             ]
         ),
@@ -327,9 +369,9 @@ html.Div(
 ),
 ])
 
-# if __name__ == '__main__':
-#     app.run_server(debug=
-#                    True)
+if __name__ == '__main__':
+    app.run_server(debug=
+                   True)
                 #    False)
 
 # ================================ Export Data =============================== #
