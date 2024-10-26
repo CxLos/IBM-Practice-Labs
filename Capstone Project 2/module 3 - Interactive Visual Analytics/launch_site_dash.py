@@ -76,13 +76,39 @@ options=[{'label': 'All Sites', 'value': 'ALL'},{'label': 'site1', 'value': 'sit
 
 # ========================== Graphs ========================== #
 
+# 6. Line Chart of Yearly Success Rate
+df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
+df["Year"] = df["Date"].dt.year
+suc_rate = df.groupby("Year")["Class"].mean().reset_index()
+
+yearly_success_rate = px.line(
+    suc_rate,
+    x='Year',
+    y='Class',
+)
+
+yearly_success_rate.update_layout(
+    title='Yearly Success Rate',
+    title_x=0.5,
+    font=dict(
+    family='Calibri',
+    size=17,
+    color='black'
+    )
+)
+
+yearly_success_rate.update_traces(
+    hovertemplate='<b>Year:</b> %{x}<br><b>Success Rate:</b> %{y:.2f}<extra></extra>'
+)
+
 # Convert class column to str
-# df['Class'] = df['Class'].astype(str)
+df['Class'] = df['Class'].astype(str)
 
 # Calculate Success Ratio of each launch site where 0 = success and 1 = failure:
 # Round to 2 decimal places
 df_success = df.groupby(['LaunchSite', 'Class']).size().unstack() # we use size() instead of count() to include NaN values and unstack() to pivot the table
-df_success['success_rate'] = round(df_success[0] / (df_success[0] + df_success[1]), 2)
+# df_success['success_rate'] = round(df_success[0] / (df_success[0] + df_success[1]), 2)
+df_success['success_rate'] = round(df_success['0'] / (df_success['0'] + df_success['1']), 2)
 df_success = df_success.reset_index()
 
 # print(df_success.head())
@@ -198,31 +224,6 @@ payload_orbit_scatter.update_layout(
 
 payload_orbit_scatter.update_traces(
     hovertemplate='<b>Payload Mass:</b> %{x} kg<br><b>Orbit:</b> %{y}<br><b>Class:</b> %{marker.color}<extra></extra>'
-)
-
-# 6. Line Chart of Yearly Success Rate
-df["Date"] = pd.to_datetime(df["Date"], errors='coerce')
-df["Year"] = df["Date"].dt.year
-suc_rate = df.groupby("Year")["Class"].mean().reset_index()
-
-yearly_success_rate = px.line(
-    suc_rate,
-    x='Year',
-    y='Class',
-)
-
-yearly_success_rate.update_layout(
-    title='Yearly Success Rate',
-    title_x=0.5,
-    font=dict(
-    family='Calibri',
-    size=17,
-    color='black'
-    )
-)
-
-yearly_success_rate.update_traces(
-    hovertemplate='<b>Year:</b> %{x}<br><b>Success Rate:</b> %{y:.2f}<extra></extra>'
 )
 
 # 7. Launch Success Count for all Sites Pie Chart
@@ -624,11 +625,20 @@ html.Div(
         ),
         html.Div(
             className='graph4',
-            children=[
-                dcc.Graph(
-                    figure=payload_outcome_scatter
-                )
-            ]
+    children=[
+        dcc.Graph(
+            id='payload-outcome-scatter',
+            figure=payload_outcome_scatter
+        )
+        #  dcc.RangeSlider(
+        #     id='payload-range-slider',
+        #     min=0,
+        #     max=10000,
+        #     step=1000,
+        #     marks={0: '0', 10000: '10000'},
+        #     value=[0, 10000]
+        # )
+    ]
         )
     ]
 ),
@@ -726,18 +736,18 @@ html.Div(
 ])
 
 # Function decorator to specify function input and output
-@app.callback(Output(component_id='success-pie-chart', component_property='figure'),
-              Input(component_id='site-dropdown', component_property='value'))
+# @app.callback(Output(component_id='success-pie-chart', component_property='figure'),
+#               Input(component_id='site-dropdown', component_property='value'))
 
-def get_pie_chart(entered_site):
-    filtered_df = df
-    if entered_site == 'ALL':
-        fig = px.pie(df, values='class', 
-        names='pie chart names', 
-        title='title')
-        return fig
-    else:
-        return
+# def get_pie_chart(entered_site):
+#     filtered_df = df
+#     if entered_site == 'ALL':
+#         fig = px.pie(df, values='class', 
+#         names='pie chart names', 
+#         title='title')
+#         return fig
+#     else:
+#         return
         # return the outcomes piechart for a selected site
 
 if __name__ == '__main__':
