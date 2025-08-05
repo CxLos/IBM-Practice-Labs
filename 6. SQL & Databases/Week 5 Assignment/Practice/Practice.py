@@ -1,7 +1,7 @@
 
 import csv, sqlite3
 import pandas
-from pyodide.http import pyfetch
+# from pyodide.http import pyfetch
 import urllib.request 
 import requests
 import matplotlib.pyplot as plt
@@ -27,6 +27,11 @@ cur = con.cursor()
 df = pandas.read_csv(url)
 df2 = pandas.read_csv(url2)
 df3 = pandas.read_csv(url3)
+
+updated_path = 'public_schools_data.xlsx'
+data_path = os.path.join(script_dir, updated_path)
+df3.to_excel(data_path, index=False)
+print(f"DataFrame saved to {data_path}")
 
 df.to_sql("CENSUS_DATA", con, if_exists='replace', index=False,method="multi")
 # df2.to_sql("CHICAGO_CRIME_DATA", con, if_exists='replace', index=False, method="multi")
@@ -81,7 +86,13 @@ df4 = pandas.read_sql_query("select count(*) from CHICAGO_PUBLIC_SCHOOLS_DATA wh
 # where CD.community_area_number = CPS.community_area_number and college_enrollment > 4368; """, con)
 
 # # 12. Hardship index for the community area that has highest value for college enrollment
-# df4 = pandas.read_sql_query("select CD.community_area_name, hardship_index from CENSUS_DATA CD, CHICAGO_PUBLIC_SCHOOLS_DATA CPS where CD.community_area_number = CPS.community_area_number and college_enrollment = (select max(college_enrollment) from CHICAGO_PUBLIC_SCHOOLS_DATA);", con)
+# df4 = pandas.read_sql_query(
+# "select CD.community_area_name, hardship_index 
+# from CENSUS_DATA CD, CHICAGO_PUBLIC_SCHOOLS_DATA CPS 
+# where CD.community_area_number = CPS.community_area_number 
+# and college_enrollment = (select max(college_enrollment) 
+# from CHICAGO_PUBLIC_SCHOOLS_DATA);
+# ", con)
 
 # df4 = pandas.read_sql_query("select community_area_name, college_enrollment from CHICAGO_PUBLIC_SCHOOLS_DATA order by college_enrollment desc limit 20;", con)
 

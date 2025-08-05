@@ -62,15 +62,17 @@ df33 = pandas.read_sql_query("select * from CHICAGO_PUBLIC_SCHOOLS_DATA limit 10
 # df4 = pandas.read_sql_query(""" select Community_area_name, MAX(hardship_index) from CENSUS_DATA; """, con)
 
 # # 10. Subquery to determine community area name with highest number of crimes
-df4 = pandas.read_sql_query(""" SELECT community_area_name
-FROM CENSUS_DATA
-WHERE COMMUNITY_AREA_NUMBER IN (
-    SELECT CCD.COMMUNITY_AREA_NUMBER
-    FROM CHICAGO_CRIME_DATA CCD
-    GROUP BY CCD.COMMUNITY_AREA_NUMBER
-    ORDER BY COUNT(CCD.COMMUNITY_AREA_NUMBER) DESC
-    LIMIT 10
-); """, con)
+df4 = pandas.read_sql_query(
+""" 
+    SELECT community_area_name
+    FROM CENSUS_DATA
+    WHERE COMMUNITY_AREA_NUMBER IN (
+        SELECT CCD.COMMUNITY_AREA_NUMBER
+        FROM CHICAGO_CRIME_DATA CCD
+        GROUP BY CCD.COMMUNITY_AREA_NUMBER
+        ORDER BY COUNT(CCD.COMMUNITY_AREA_NUMBER) DESC
+        LIMIT 10);
+""", con)
 
 # unique = df2["LOCATION_DESCRIPTION"].unique()
 

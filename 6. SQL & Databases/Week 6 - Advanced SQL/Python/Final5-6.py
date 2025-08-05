@@ -65,7 +65,8 @@ df33 = pandas.read_sql_query("select * from CHICAGO_PUBLIC_SCHOOLS_DATA limit 10
 
 con.execute("DROP VIEW CHICAGO_SCHOOLS")
 
-con.execute( """ CREATE VIEW CHICAGO_SCHOOLS AS 
+con.execute( 
+      """ CREATE VIEW CHICAGO_SCHOOLS AS 
             SELECT 
             NAME_OF_SCHOOL AS School_Name, 
             SAFETY_ICON AS Safety_Rating, 
@@ -75,7 +76,8 @@ con.execute( """ CREATE VIEW CHICAGO_SCHOOLS AS
             LEADERS_ICON AS Leaders_Rating,
             TEACHERS_ICON AS Teachers_Rating
             FROM CHICAGO_PUBLIC_SCHOOLS_DATA
-            LIMIT 10; """ )
+            LIMIT 10; 
+""" )
 
 df4 = pandas.read_sql_query(
   """ SELECT * FROM CHICAGO_SCHOOLS """
